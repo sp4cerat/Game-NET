@@ -24,7 +24,7 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 **Limitations**
 
 * Byte order will be supported in the future (htons..)
-* only void functions are supported
+* only void functions can be used. I tested with non-void functions, but it made the client/server programming much more complex
 
 **Example Usage**
 
