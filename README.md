@@ -11,7 +11,7 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 
 **Features**
 
-* Register RPCs in one line without specifying the parameters - the program will automatically detect
+* Register RPCs in one line. The RPC class autodetects all paramters from the function pointer
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
 * Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
