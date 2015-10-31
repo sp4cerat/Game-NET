@@ -119,6 +119,86 @@ namespace GameServer
 				i.second.health);
 		}
 	}
+	void update_game()
+	{
+		// update shots
+		map<uint, uint> id_remove;
+
+		for (auto &g : games) if (g.first != id_lobby)
+			for (auto &i : g.second.game_objects)
+				if (i.second.type == GameObject::Shot)
+				{
+					vec3 &pos = i.second.pos;
+					pos += vec3(i.second.rot.x, i.second.rot.y, 0)*0.25f;
+
+					Rpc::Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
+
+					//remove shots if collided or outside screen 
+					if (pos.x >= global_width || pos.y >= global_height || pos.x < 0 || pos.y < 0 || global_collision(pos.x, pos.y))
+					{
+						// remove obj by setting health to 0
+						m = server.msg("game_obj_health", i.first, 0);
+						id_remove[g.first] = i.first;
+					}
+
+					// hit other player ?
+					for (auto &j : g.second.game_objects)
+						if (j.second.type == GameObject::Player)
+						{
+							if (j.second.distance(i.second) < 1)
+							{
+								// notify others of health
+								j.second.health -= 1;
+								Rpc::Message m1 = server.msg("game_obj_health", j.first, j.second.health);
+
+								// benefit shoot creator if less than 100 health
+								uint &creator_health = g.second.game_objects[i.second.creator].health;
+								if (creator_health<100)creator_health++;
+								Rpc::Message m2 = server.msg("game_obj_health", i.second.creator, creator_health);
+
+								// get score in addition ?
+								uint &creator_score = players[i.second.creator].score;
+								Rpc::Message m3;
+								if (j.second.health <= 0)
+								{
+									creator_score++;
+									m3 = server.msg("game_obj_score", i.second.creator, creator_score);
+								}
+								// broadcast message
+								for (auto &p : players) if (p.second.game == g.first)
+								{
+									server.send_to(p.first, m1);
+									server.send_to(p.first, m2);
+									server.send_to(p.first, m3);
+								}
+								if (j.second.health <= 0) id_remove[g.first] = j.first;
+							}
+						}
+					// notify others
+					for (auto &p : players) if (p.second.game == g.first)
+					{
+						server.send_to(p.first, m, 0 /*unrealible*/);
+					}
+				}
+		for (auto i : id_remove)
+		{
+			games[i.first].game_objects.erase(i.second);
+		}
+	}
+	void update_lobby()
+	{
+		Rpc::Message msg_lobby = lobby_update_msg();
+
+		static uint counter = 0; counter = counter + 1;
+
+		if (counter % 100 != 0) return;
+
+		for (auto &i : players)
+			if (i.second.game_state == GAMESTATE_LOBBY)
+			{
+				server.send_to(i.first, msg_lobby);
+			}
+	}
 	// ------------------------ Callbacks ------------------------ //
 
 	void connect(uint clientid)
@@ -130,86 +210,6 @@ namespace GameServer
 		cout << "Server::Client " << clientid << " disconnected" << endl;
 		players.erase(clientid);
 		names.erase(clientid);
-	}
-	void update_game()
-	{
-		// update shots
-		map<uint, uint> id_remove;
-
-		for (auto &g : games) if(g.first != id_lobby) 
-		for (auto &i : g.second.game_objects) 
-		if (i.second.type == GameObject::Shot)
-		{
-			vec3 &pos = i.second.pos;  
-			pos += vec3(i.second.rot.x, i.second.rot.y, 0)*0.25f;
-
-			Rpc::Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
-
-			//remove shots if collided or outside screen 
-			if (pos.x >= global_width || pos.y >= global_height || pos.x < 0 || pos.y < 0 || global_collision(pos.x, pos.y))
-			{
-				// remove obj by setting health to 0
-				m = server.msg("game_obj_health", i.first, 0);
-				id_remove[g.first] = i.first;
-			}
-
-			// hit other player ?
-			for (auto &j : g.second.game_objects)
-			if  ( j.second.type == GameObject::Player )
-			{
-				if (j.second.distance(i.second) < 1)
-				{
-					// notify others of health
-					j.second.health -= 1;
-					Rpc::Message m1 = server.msg("game_obj_health", j.first, j.second.health);
-						
-					// benefit shoot creator if less than 100 health
-					uint &creator_health = g.second.game_objects[i.second.creator].health;
-					if (creator_health<100)creator_health++;
-					Rpc::Message m2 = server.msg("game_obj_health", i.second.creator, creator_health );
-
-					// get score in addition ?
-					uint &creator_score = players[i.second.creator].score;
-					Rpc::Message m3;
-					if (j.second.health <= 0)
-					{
-						creator_score++;
-						m3 = server.msg("game_obj_score", i.second.creator, creator_score);
-					}
-					// broadcast message
-					for (auto &p : players) if (p.second.game == g.first)
-					{
-						server.send_to(p.first,  m1);
-						server.send_to(p.first,  m2);
-						server.send_to(p.first,  m3);
-					}
-					if (j.second.health <= 0) id_remove[g.first] = j.first;
-				}
-			}
-			// notify others
-			for (auto &p : players) if (p.second.game == g.first )
-			{
-				server.send_to(p.first, m,0 /*unrealible*/);
-			}
-		}
-		for (auto i : id_remove)
-		{
-			games[i.first].game_objects.erase(i.second);
-		}
-	}
-	void update_lobby()
-	{
-		Rpc::Message msg_lobby = lobby_update_msg();
-
-		static uint counter = 0; counter = counter + 1; 
-		
-		if (counter % 100 != 0) return;
-		
-		for (auto &i : players)
-		if (i.second.game_state == GAMESTATE_LOBBY)
-		{
-			server.send_to(i.first, msg_lobby);
-		}
 	}
 	void clientupdate(NetServer &s)
 	{
