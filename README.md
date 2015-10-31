@@ -23,8 +23,6 @@ The library provides basic client / server network functionalities for games usi
 
 *Byte order will be supported in the future (htons..)
 
-![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
-
 **Example Usage**
 
 Call Server Function:
@@ -33,7 +31,7 @@ Client Side:
 
     NetClient client;
     client.connect("localhost", 12345);
-    client.call("login", "myname", "12345");
+    client.call("login", "myname", "pass");
 
 Server Side:
 
@@ -45,6 +43,7 @@ Server Side:
     NetServer server;
     rpc_register_local(server.get_rpc(), login);
 
+![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
 ![Screenshot2](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/lobby.png?raw=true)
 
 (C) by Sven Forstmann in 2015
