@@ -1,4 +1,4 @@
-### Game NET - A Simple Network Library with RPC support for Games
+### Game NET - A Simple Network Lib with RPC support
 
 #### License : MIT
 #### http://opensource.org/licenses/MIT
@@ -11,7 +11,6 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 
 **Features**
 
-* C++11 based 
 * Register RPCs in one line without specifying the parameters - the program will automatically detect
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
@@ -20,6 +19,7 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 * Reliable and unreliable calls possible
 * Based on ENet
 * Tested on Cygwin and Windows, should compile in Linux too
+* C++11 based 
 
 **Limitations**
 
