@@ -3,6 +3,8 @@
 
 namespace GameClient
 {
+	enum GAMESTATE { GAMESTATE_LOGIN = 0, GAMESTATE_LOBBY = 1, GAMESTATE_GAME = 2 };
+
 	// global
 	NetClient client;
 	thread   *client_thread;

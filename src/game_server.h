@@ -1,12 +1,10 @@
 ﻿
 // ##################### SERVER ##################### //
 
-#define GAMESTATE_LOGIN		0
-#define GAMESTATE_LOBBY		1
-#define GAMESTATE_GAME		2
-
 namespace GameServer
 {
+	enum GAMESTATE { GAMESTATE_LOGIN=0, GAMESTATE_LOBBY=1, GAMESTATE_GAME=2 };
+
 	// ------------------------ Data ------------------------ //
 
 	NetServer    server;
@@ -188,7 +186,6 @@ namespace GameServer
 					if (j.second.health <= 0) id_remove[g.first] = j.first;
 				}
 			}
-
 			// notify others
 			for (auto &p : players) if (p.second.game == g.first )
 			{
@@ -200,22 +197,24 @@ namespace GameServer
 			games[i.first].game_objects.erase(i.second);
 		}
 	}
-	void clientupdate(NetServer &s)
+	void update_lobby()
 	{
 		Rpc::Message msg_lobby = lobby_update_msg();
-		static uint counter = 0; counter = counter + 1;
 
-		update_game();
-
+		static uint counter = 0; counter = counter + 1; 
+		
+		if (counter % 100 != 0) return;
+		
 		for (auto &i : players)
+		if (i.second.game_state == GAMESTATE_LOBBY)
 		{
-			int id = i.first;
-			Player &p = i.second;
-
-			if (p.game_state == GAMESTATE_LOGIN);;
-			if (p.game_state == GAMESTATE_LOBBY)	if (counter%100==0) server.send_to(id, msg_lobby);;
-			if (p.game_state == GAMESTATE_GAME)		;
+			server.send_to(i.first, msg_lobby);
 		}
+	}
+	void clientupdate(NetServer &s)
+	{
+		update_game();
+		update_lobby();
 	}
 
 	// ------------------------ RPCs ------------------------ //
