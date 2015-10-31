@@ -31,19 +31,19 @@ Call Server Function:
 
 Client Side:
 
-|NetClient client;
-|client.connect("localhost", 12345);
-|client.call("login", "myname", "12345");
+    NetClient client;
+    client.connect("localhost", 12345);
+    client.call("login", "myname", "12345");
 
 Server Side:
 
-|void login(uint clientid, string name, string password)
-|{
-| // clientid is the first parameter for server functions
-|}
-|
-|NetServer server;
-|rpc_register_local(server.get_rpc(), login);
+    void login(uint clientid, string name, string password)
+    {
+        // clientid is the first parameter for server functions
+    }
+    
+    NetServer server;
+    rpc_register_local(server.get_rpc(), login);
 
 ![Screenshot2](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/lobby.png?raw=true)
 
