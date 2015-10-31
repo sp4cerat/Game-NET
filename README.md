@@ -14,7 +14,7 @@ The library provides basic client / server network functionalities for games usi
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
 * Supported Datatypes : char,uchar,short,ushort,int,uint,float,double,vector,map, GLM vec,mat and quat
-* Support for nested Datatypes like map<string,vector>
+* Support for nested Datatypes like map [ string , vector ]
 * Reliable and unreliable calls possible
 * Based on ENet
 * Tested on Cygwin and Windows, should compile in Linux too
