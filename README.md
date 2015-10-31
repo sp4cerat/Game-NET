@@ -49,6 +49,7 @@ Client Side:
     void set_pos(vec3 pos)
     {
         // do something
+        exit(0);
     }
     
     int main()
@@ -57,6 +58,8 @@ Client Side:
         rpc_register_local(client.get_rpc(), set_pos);
         client.connect("localhost", 12345);
         client.call("login", "myname", "pass");
+        while(1) client.process();
+        //client.disconnect();
     }
 
 Server Side:
@@ -73,7 +76,9 @@ Server Side:
     {
         rpc_register_local(server.get_rpc(), login);
         rpc_register_remote(server.get_rpc(), set_pos);    
-        thread *t=new thread(NetServer::start, &server);
+        server.start();
+        core_sleep(10000) ; // wait client to do stuff
+        server.stop();
     }
     
     
