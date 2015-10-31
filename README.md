@@ -50,4 +50,6 @@ Server Side:
 ![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
 ![Screenshot2](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/lobby.png?raw=true)
 
+RPC System, how its done: http://cpp.sh/9jc5
+
 (C) by Sven Forstmann in 2015
