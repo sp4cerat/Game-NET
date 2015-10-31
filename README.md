@@ -23,6 +23,7 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 
 **Limitations**
 
+* RPCs cannot be class member functions
 * No compression
 * No encryption
 * Byte order will be supported in the future (htons..)
