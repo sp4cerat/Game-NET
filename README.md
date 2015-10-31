@@ -43,8 +43,9 @@ Server Side:
     }
     
     NetServer server;
-    new thread(NetServer::start, &server);
     rpc_register_local(server.get_rpc(), login);
+    thread *t=new thread(NetServer::start, &server);
+    
 
 ![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
 ![Screenshot2](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/lobby.png?raw=true)
