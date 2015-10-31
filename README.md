@@ -13,7 +13,7 @@ The library provides basic client / server network functionalities for games usi
 * Register RPCs in one line without specifying the parameters - the program will automatically detect
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
-* Supported Datatypes : char,uchar,short,ushort,int,uint,float,double,vector,map, GLM vec,mat and quat
+* Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
 * Support for nested Datatypes like map [ string , vector ]
 * Reliable and unreliable calls possible
 * Based on ENet
