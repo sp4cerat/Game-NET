@@ -30,6 +30,7 @@ Call Server Function:
 Client Side:
 
     NetClient client;
+    rpc_register_remote(client.get_rpc(), login);
     client.connect("localhost", 12345);
     client.call("login", "myname", "pass");
 
@@ -41,6 +42,7 @@ Server Side:
     }
     
     NetServer server;
+    new thread(NetServer::start, &server);
     rpc_register_local(server.get_rpc(), login);
 
 ![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
