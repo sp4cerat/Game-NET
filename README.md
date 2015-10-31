@@ -7,11 +7,9 @@
 
 The library provides basic client / server network functionalities for games using RPCs. The major strength of the library is the template based RPC class. It allows to register and call RPCs effortless. It further includes a tutorial game server and game client (each around 300  lines of code ) for a very simple multiplayer shooting game as a proof of concept.
 
-![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
-
 **Features**
 
-* C++11 based
+* C++11 based 
 * Register RPCs in one line without specifying the parameters - the program will automatically detect
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
@@ -24,6 +22,28 @@ The library provides basic client / server network functionalities for games usi
 **Limitations**
 
 *Byte order will be supported in the future (htons..)
+
+![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
+
+**Example Usage**
+
+Call Server Function:
+
+Client Side:
+
+|NetClient client;
+|client.connect("localhost", 12345);
+|client.call("login", "myname", "12345");
+
+Server Side:
+
+|void login(uint clientid, string name, string password)
+|{
+| // clientid is the first parameter for server functions
+|}
+|
+|NetServer server;
+|rpc_register_local(server.get_rpc(), login);
 
 ![Screenshot2](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/lobby.png?raw=true)
 
