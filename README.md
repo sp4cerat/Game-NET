@@ -33,20 +33,37 @@ Call Server Function:
 Client Side:
 
     NetClient client;
-    rpc_register_remote(client.get_rpc(), login);
-    client.connect("localhost", 12345);
-    client.call("login", "myname", "pass");
+    
+    void set_pos(vec3 pos)
+    {
+        // do something
+    }
+    
+    int main()
+    {
+        rpc_register_remote(client.get_rpc(), login);
+        rpc_register_local(client.get_rpc(), set_pos);
+        client.connect("localhost", 12345);
+        client.call("login", "myname", "pass");
+    }
 
 Server Side:
 
+    NetServer server;
+    
     void login(uint clientid, string name, string password)
     {
         // clientid is the first parameter for server functions
+        server.call("set_pos", vec3(1,2,3));    
     }
     
-    NetServer server;
-    rpc_register_local(server.get_rpc(), login);
-    thread *t=new thread(NetServer::start, &server);
+    int main()
+    {
+        rpc_register_local(server.get_rpc(), login);
+        rpc_register_remote(server.get_rpc(), set_pos);    
+        thread *t=new thread(NetServer::start, &server);
+    }
+    
     
 
 ![Screenshot1](https://github.com/sp4cerat/Game-NET/blob/master/screenshots/game.png?raw=true)
