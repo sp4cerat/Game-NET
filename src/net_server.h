@@ -192,5 +192,5 @@ public:
 	};
 	Mailbox _mailbox;
 
-	std::shared_ptr<thread> _server_thread;
+	shared_ptr<thread> _server_thread;
 };

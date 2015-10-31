@@ -7,7 +7,7 @@ namespace GameClient
 
 	// global
 	NetClient client;
-	thread   *client_thread;
+	shared_ptr<thread> client_thread;
 	bool      quit;
 
 	// player info
@@ -304,7 +304,7 @@ namespace GameClient
 					uint update_delay_ms=10)
 	{
 		username = login;
-		client_thread = new thread(main_loop, login, password, hostname, port, update_delay_ms);
+		client_thread = make_shared<thread>(main_loop, login, password, hostname, port, update_delay_ms);
 	}
 	void stop()
 	{
