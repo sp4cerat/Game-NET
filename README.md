@@ -7,6 +7,8 @@
 
 The library provides basic client / server network functionalities for games using RPCs. The major strength of the library is the template based RPC class. It allows to register and call RPCs effortless. It further includes a tutorial game server and game client (each around 300  lines of code ) for a very simple multiplayer shooting game as a proof of concept.
 
+The tutorial game only has 300 lines of server code and 300 lines client code.
+
 **Features**
 
 * C++11 based 
