@@ -22,6 +22,7 @@ The library provides basic client / server network functionalities for games usi
 **Limitations**
 
 *Byte order will be supported in the future (htons..)
+*only void functions are supported
 
 **Example Usage**
 
