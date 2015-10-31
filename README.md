@@ -1,4 +1,4 @@
-### Game NET - A Simple Network Library with RPC support for Games
+### Game NET - A Simple Network Lib with RPC support
 
 #### License : MIT
 #### http://opensource.org/licenses/MIT
