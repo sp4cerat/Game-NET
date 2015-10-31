@@ -100,7 +100,7 @@ namespace GameClient
 		char c = core_keyb(); 
 		
 		if (c==0) return;
-		if (c=='x') exit(0);
+		if (c == 'x') global_exit=true;
 		
 		if (c == 'm') // press m for message
 		{
@@ -171,7 +171,7 @@ namespace GameClient
 		char c = core_keyb(); 
 		
 		if(c==0)return;	
-		if(c=='x') exit(0);
+		if (c == 'x') global_exit = true;
 
 		bool dead = (game_objects.find(clientid) == game_objects.end()); 
 

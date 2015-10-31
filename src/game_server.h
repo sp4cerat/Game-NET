@@ -8,7 +8,6 @@ namespace GameServer
 	// ------------------------ Data ------------------------ //
 
 	NetServer    server;
-	std::thread *server_thread;
 
 	uint id_lobby;
 
@@ -328,7 +327,7 @@ namespace GameServer
 		games[id_game1] = Game("map1.map");
 		games[id_game2] = Game("map2.map");
 
-		server_thread = new thread(NetServer::start, &server);
+		server.start();
 	}
 	void stop()
 	{

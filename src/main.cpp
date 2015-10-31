@@ -15,6 +15,7 @@
 // 
 // Global Function for Text rendering - used by game_client.h 
 //
+bool		global_exit = false;
 const int	global_width = 75, global_height = 25;
 const char  global_level[global_height][global_width] =
 {
@@ -83,8 +84,6 @@ int main()
 						10,		/* update delay */
 						10,		/* max connected players */
 						2000	/* client timeout before disconnect*/);
-	//system("pause");
-	//GameServer::stop();
 
 	core_sleep(100);
 
@@ -97,10 +96,11 @@ int main()
 						"localhost",	/* server host */	
 						12345,			/* server port */
 						10				/* update delay */	);	
-	//system("pause");
-	//GameClient::stop();
 
-	while (1)core_sleep(1000);
+	while (!global_exit)core_sleep(1000);
+
+	GameClient::stop();
+	GameServer::stop();
 	
 	return 0;
 }

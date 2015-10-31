@@ -62,6 +62,8 @@ public:
 
 		uint _server_time = core_time();
 
+		_quit = 0;
+
 		while (!_quit)
 		{
 			while (1)
@@ -109,8 +111,9 @@ public:
 		enet_host_destroy(_server);
 		
 	};
-	void static start(NetServer *s){ s->_quit = 0;  s->main_loop(); };
-	void stop(){ _quit = 1; };
+	static void start_helper(NetServer *s){ s->main_loop(); };
+	void start(){ _server_thread = make_shared<thread>(NetServer::start_helper, this); };
+	void stop() { _quit = 1; _server_thread->join(); };
 
 	Rpc& get_rpc(){ return _rpc; }
 
@@ -189,4 +192,5 @@ public:
 	};
 	Mailbox _mailbox;
 
+	std::shared_ptr<thread> _server_thread;
 };
