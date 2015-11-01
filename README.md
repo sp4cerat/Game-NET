@@ -9,7 +9,7 @@ The library provides basic client / server network functionalities for games usi
 
 The tutorial game only has 300 lines of server code and 300 lines client code.
 
-**Network Lib Features**
+**Network Rpc Lib Features**
 
 * Register RPCs in one line. The RPC class autodetects all paramters from the function pointer
 * RPC Data-type mismatch or wrong number of parameters are stated as error to ease debugging
@@ -23,7 +23,7 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 * Tested on Cygwin and Windows, should compile in Linux too
 * C++11 based 
 
-**Network Lib Limitations**
+**Network Rpc Lib Limitations**
 
 * RPCs cannot be class member functions
 * No compression
