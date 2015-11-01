@@ -69,7 +69,7 @@ Server Side:
     void login(uint clientid, string name, string password)
     {
         // clientid is the first parameter for server functions
-        server.call("set_pos", vec3(1,2,3));    
+        server.call(clientid, "set_pos", vec3(1,2,3));    
     }
     
     int main()
