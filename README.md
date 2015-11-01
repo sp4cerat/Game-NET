@@ -1,4 +1,4 @@
-### Game NET - A Simple Network Lib with RPC support
+### Game NET - A Simple RPC Network Library (C++11)
 
 ***Write a simple server / client RPC system in just 10+20 lines of code.***
 
