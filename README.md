@@ -40,6 +40,7 @@ The library provides basic client / server network functionalities for games usi
 * Multiple Games
 * Handle spwaning/removing of game objects
 * Simple Shooting functionality
+* Intentionally textmode for simplicity
 
 **Example Usage**
 
