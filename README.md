@@ -32,6 +32,7 @@ The library provides basic client / server network functionalities for games usi
 * No encryption
 * Byte order will be supported in the future (htons..)
 * Only void functions supported. Non-void functions were tested but complicated everything.
+* Client to Client connections are not supported
 
 **Example Game Features**
 
