@@ -1,6 +1,6 @@
 ### Game NET - A Simple Network Lib with RPC support
 
-***Write a simple Client/Server RPC system in just 30 lines of code.***
+***Write a simple server/client RPC system in just 10+20 lines of code.***
 
 ***Write a multiplayer game with client/server in 300+300 lines of code.***
 
