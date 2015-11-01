@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="3rd">
+      <UniqueIdentifier>{c4109bae-6bd3-4ead-829c-2665c4a562b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{087f0370-ade4-42c4-b213-7f89413c39c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd\StackWalker">
+      <UniqueIdentifier>{4633b3d0-9e92-4ba3-905d-c62cd986a1cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{27d43ce2-53f6-46ed-b43b-6b0f2e948b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd\enet">
+      <UniqueIdentifier>{eaf60f67-7a99-4f69-8379-f2800fef6f2e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="3rd\stackwalker\StackWalker.cpp">
+      <Filter>3rd\StackWalker</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\core.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\callbacks.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\compress.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\host.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\list.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\packet.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\peer.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\protocol.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd\enet\win32.c">
+      <Filter>3rd\enet</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main_game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\game_client.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game_server.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net_client.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net_rpc.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\net_server.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\core.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\core_windows.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

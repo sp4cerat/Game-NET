@@ -49,47 +49,47 @@ namespace GameClient
 	void render_lobby()
 	{
 		uint line = 0;
-		global_screen_clear();
-		global_screen_set(0, line++, "Simple Multiplayer Tutorial using RPCs");
+		global::screen_clear();
+		global::screen_set(0, line++, "Simple Multiplayer Tutorial using RPCs");
 		line++;
-		global_screen_set(0, line++, "---------  LOBBY  ---------");
-		global_screen_set(0, line++, "-Lobby Controls           -");
-		global_screen_set(0, line++, "-2..9 : Join game         -");
-		global_screen_set(0, line++, "-m    : Message           -");
-		global_screen_set(0, line++, "-x    : Exit              -");
-		global_screen_set(0, line++, "---------------------------");
-		global_screen_set(0, line++, "-Game Controls            -");
-		global_screen_set(0, line++, "-wasd : Move    x : Exit  -");
-		global_screen_set(0, line++, "-space: Fire    l : Leave -");
-		global_screen_set(0, line++, "-r    : Respawn           -");
-		global_screen_set(0, line++, "---------------------------");
+		global::screen_set(0, line++, "---------  LOBBY  ---------");
+		global::screen_set(0, line++, "-Lobby Controls           -");
+		global::screen_set(0, line++, "-2..9 : Join game         -");
+		global::screen_set(0, line++, "-m    : Message           -");
+		global::screen_set(0, line++, "-x    : Exit              -");
+		global::screen_set(0, line++, "---------------------------");
+		global::screen_set(0, line++, "-Game Controls            -");
+		global::screen_set(0, line++, "-wasd : Move    x : Exit  -");
+		global::screen_set(0, line++, "-space: Fire    l : Leave -");
+		global::screen_set(0, line++, "-r    : Respawn           -");
+		global::screen_set(0, line++, "---------------------------");
 
 		for (auto &i : lobby_players)
 		{
-			global_screen_set(0, line++, "-Player [" + core_to_string(i.first) + "] " + i.second);
+			global::screen_set(0, line++, "-Player [" + core_to_string(i.first) + "] " + i.second);
 		}
 
-		global_screen_set(0, line++, "---------------------------");
+		global::screen_set(0, line++, "---------------------------");
 
 		for (auto &i : lobby_games)
 		{
-			global_screen_set(0, line++, "-Game[" + core_to_string(i.first) + "] " + i.second);
+			global::screen_set(0, line++, "-Game[" + core_to_string(i.first) + "] " + i.second);
 		}
 
-		global_screen_set(0, line++, "---------------------------");
+		global::screen_set(0, line++, "---------------------------");
 
 		line = 5;
 
-		global_screen_set(40, line++, "- Chat --------------------");
+		global::screen_set(40, line++, "- Chat --------------------");
 
 		for (auto &i : lobby_messages)
 		{
-			global_screen_set(40, line++, i);
+			global::screen_set(40, line++, i);
 		}
 
 		if (lobby_messages.size() == 10) lobby_messages.clear();
 
-		global_screen_draw();
+		global::screen_draw();
 	}
 	void update_lobby()
 	{
@@ -100,7 +100,7 @@ namespace GameClient
 		char c = core_keyb(); 
 		
 		if (c==0) return;
-		if (c == 'x') global_exit=true;
+		if (c == 'x') global::exit=true;
 		
 		if (c == 'm') // press m for message
 		{
@@ -121,32 +121,30 @@ namespace GameClient
 
 	void render_game()
 	{
-		global_screen_clear();
-		global_screen_draw_level();
+		global::screen_clear();
+		global::screen_draw_level();
+
+		// Draw Game Objects
 
 		for (auto &i : game_objects) 
 		{ 
 			vec3	p = i.second.pos; 
 			string	n = i.second.name;
-			
-			int y = p.y, x = p.x;
-			if (x < 0 || x>=global_width || y < 0 || y>=global_height) continue;
-			global_screen_set(x,y,(i.second.type == GameObject::Player) ? 'O' : '*');
+			string  h = core_to_string(i.second.health);
+
+			global::screen_set(p.x, p.y, (i.second.type == GameObject::Player) ? 'O' : '*');
 			
 			// player name
-			loopj(0, n.length())
-			{
-				global_screen_set(x + j - n.length() / 2, y + 1, n[j]);
-			}
+			global::screen_set(p.x - n.length() / 2, p.y + 1, n);
 						
 			// health
-			if (i.second.type == GameObject::Player) 
-			if (i.second.health > 0)
+			if (i.second.type == GameObject::Player)
 			{
-				string s = core_to_string(i.second.health);
-				loopi(0, s.length()) global_screen_set(x + i - s.length() / 2, y + 2, s[i]);
+				global::screen_set(p.x - h.length() / 2, p.y + 2, h);
 			}
 		}
+
+		// Draw Statusbar
 		 
 		bool dead = (game_objects.find(clientid) == game_objects.end());
 		
@@ -158,9 +156,11 @@ namespace GameClient
 			core_to_string(score) + 
 			string((dead ? " [r] to respawn  " : "             ")) 
 		);
-		loopi(0, statusbar.length()) global_screen_set(i, global_height - 1, statusbar[i]);
-				
-		global_screen_draw();
+		loopi(0, statusbar.length()) global::screen_set(i, global::height - 1, statusbar[i]);
+		
+		// Show Screen
+
+		global::screen_draw();
 	}
 	void update_game()
 	{
@@ -171,7 +171,7 @@ namespace GameClient
 		char c = core_keyb(); 
 		
 		if(c==0)return;	
-		if (c == 'x') global_exit = true;
+		if (c == 'x') global::exit = true;
 
 		bool dead = (game_objects.find(clientid) == game_objects.end()); 
 
@@ -193,8 +193,10 @@ namespace GameClient
 		if (c == 's'){ my.rot = vec4(0, 1, 0, 0); update_pos = true; }
 		if (update_pos)
 		{
-			vec3 p = clamp(my.pos + vec3(my.rot.x, my.rot.y, 0), vec3(0, 0, 0), vec3(69, 24, 0));
-			if (!global_collision(p.x, p.y))
+			vec3 p = clamp(my.pos + vec3(my.rot.x, my.rot.y, 0), 
+				vec3(0, 0, 0), vec3(global::width - 1, global::width - 2, 0));
+
+			if (!global::collision(p.x, p.y))
 			{ 
 				my.pos = p;
 				client.call("game_player_pos", my.pos, vec4(my.rot.x, my.rot.y, 0, 0));
@@ -202,7 +204,7 @@ namespace GameClient
 		}
 		if (c == ' ')
 		{
-			client.call("game_player_shoot", my.pos + vec3(my.rot.x, my.rot.y, 0), my.rot);
+			client.call("game_player_shoot", my.pos , my.rot);
 		}
 		if (c == 'l') //  leave to lobby
 		{

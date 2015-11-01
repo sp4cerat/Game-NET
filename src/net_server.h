@@ -1,5 +1,6 @@
 class NetServer
 {
+
 public:
 
 	typedef Rpc::Message Message;
@@ -9,15 +10,14 @@ public:
 	template <class ...Args> void call(uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...)); }
 	template <class ...Args> void call_ex(uint reliable /* 0=unrelible 1=reliable */, uint id, string name, Args... args){ send_to_ex(id, _rpc.msg(name, args ...), reliable); }
 	
-	NetServer(){ _connected_clients = 0; _quit = 0; _onConnect = 0; _onDisconnect = 0; _onUpdate = 0; };
 	NetServer(
-		void c(uint clientid),
-		void d(uint clientid),
-		void u(NetServer &s),
 		uint port = 12345,
 		uint update_delay = 10,
 		uint max_connections = 32,
-		uint client_timeout = 2000
+		uint client_timeout = 2000,
+		void c(uint clientid)=0,
+		void d(uint clientid) = 0,
+		void u(NetServer &s) = 0
 		)
 	{
 		_port = port;
@@ -75,7 +75,7 @@ public:
 				core_sleep(1);
 			}
 
-			_onUpdate(*this);
+			if (_onUpdate) _onUpdate(*this);
 			_mailbox.process();
 			
 			ENetEvent event;
@@ -87,7 +87,7 @@ public:
 				uint id = get_new_id();
 				set_id(event.peer, id);
 				_mailbox[id].peer = event.peer;
-				_onConnect(get_id(event.peer));
+				if (_onConnect) _onConnect(get_id(event.peer));
 				enet_peer_timeout(event.peer, _client_timeout, 0, _client_timeout);
 				enet_packet_destroy(event.packet);
 			}
@@ -100,7 +100,7 @@ public:
 			if (event.type == ENET_EVENT_TYPE_DISCONNECT)
 			{
 				_connected_clients--;
-				_onDisconnect(get_id(event.peer));
+				if (_onDisconnect) _onDisconnect(get_id(event.peer));
 				_mailbox.erase(get_id(event.peer));
 			}
 			enet_host_flush(_server);

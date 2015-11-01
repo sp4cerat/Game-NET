@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Windows Desktop
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameNet", "GameNET.vcxproj", "{98864040-E723-43CF-9479-6FBCDF2F6C51}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game.vcxproj", "{98864040-E723-43CF-9479-6FBCDF2F6C51}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hello World", "HelloWorld.vcxproj", "{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{98864040-E723-43CF-9479-6FBCDF2F6C51}.Release|Win32.Build.0 = Release|Win32
 		{98864040-E723-43CF-9479-6FBCDF2F6C51}.Release|x64.ActiveCfg = Release|x64
 		{98864040-E723-43CF-9479-6FBCDF2F6C51}.Release|x64.Build.0 = Release|x64
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Debug|Win32.Build.0 = Debug|Win32
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Debug|x64.ActiveCfg = Debug|x64
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Debug|x64.Build.0 = Debug|x64
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Release|Win32.ActiveCfg = Release|Win32
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Release|Win32.Build.0 = Release|Win32
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Release|x64.ActiveCfg = Release|x64
+		{4ABE50EA-CA17-4A7B-A40D-7AEC1031CDAC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

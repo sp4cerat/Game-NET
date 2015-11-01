@@ -7,7 +7,7 @@ namespace GameServer
 
 	// ------------------------ Data ------------------------ //
 
-	NetServer    server;
+	NetServer server;
 
 	uint id_lobby;
 
@@ -85,7 +85,7 @@ namespace GameServer
 			t = t * 2423 + core_time() * 2157;
 			x = t % 65;
 			y = t % 22;
-		} while ( global_collision(x,y) );
+		} while ( global::collision(x,y) );
 
 		return vec3(x, y, 0);
 	}
@@ -133,7 +133,7 @@ namespace GameServer
 					Rpc::Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
 
 					//remove shots if collided or outside screen 
-					if (pos.x >= global_width || pos.y >= global_height || pos.x < 0 || pos.y < 0 || global_collision(pos.x, pos.y))
+					if (pos.x >= global::width || pos.y >= global::height || pos.x < 0 || pos.y < 0 || global::collision(pos.x, pos.y))
 					{
 						// remove obj by setting health to 0
 						m = server.msg("game_obj_health", i.first, 0);
@@ -290,13 +290,13 @@ namespace GameServer
 				uint client_timeout_ms	=2000)
 	{
 		server = NetServer(
+			port, 				/*port*/
+			update_delay_ms,	/*update delay in ms*/
+			max_connections,	/*max number of players*/
+			client_timeout_ms,	/*timeout before disconnecting player*/
 			connect,			/*connect callback*/
 			disconnect,			/*disconnect callback*/
-			clientupdate,		/*update callback*/
-			port 				/*port*/,
-			update_delay_ms		/*update delay in ms*/,
-			max_connections		/*max number of players*/,
-			client_timeout_ms	/*timeout before disconnecting player*/);
+			clientupdate		/*update callback*/);
 
 		// Register RPCs on Server and Client in same order (!!)
 		Rpc &rpc = server.get_rpc();
