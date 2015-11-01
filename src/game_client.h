@@ -288,8 +288,6 @@ namespace GameClient
 
 		client.call("login", login, password);
 
-		quit = 0;
-
 		while (!quit)
 		{
 			client.process();
@@ -305,6 +303,7 @@ namespace GameClient
 					uint port=12345 , 
 					uint update_delay_ms=10)
 	{
+		quit = 0;
 		username = login;
 		client_thread = make_shared<thread>(main_loop, login, password, hostname, port, update_delay_ms);
 	}

@@ -100,7 +100,7 @@ int main()
 						12345,			/* server port */
 						10				/* update delay */	);	
 
-	while (!global::exit)core_sleep(1000);
+	while (!global::exit) core_sleep(1000);
 
 	GameClient::stop();
 	GameServer::stop();
