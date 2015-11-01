@@ -1,15 +1,14 @@
 ### Game NET - A Simple Network Lib with RPC support
 
+***Write a simple Client/Server RPC system in just 30 lines of code.***
+***Write a multiplayer game with client/server in 300+300 lines of code.***
+
 #### License : MIT
 #### http://opensource.org/licenses/MIT
 
 **Summary** 
 
 The library provides basic client / server network functionalities for games using RPCs. The major strength of the library is the template based RPC class. It allows to register and call RPCs effortless. It further includes a tutorial game server and game client (each around 300  lines of code ) for a very simple multiplayer shooting game as a proof of concept.
-
-***Write a simple Client/Server RPC system in just 30 lines of code.***
-
-***Write a multiplayer game with client/server in 300+300 lines of code.***
 
 **Network RPC Lib Features**
 
