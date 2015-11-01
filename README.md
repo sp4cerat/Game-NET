@@ -1,5 +1,9 @@
 ### Game NET - A Simple Network Lib with RPC support
 
+***Write a simple server / client RPC system in just 10+20 lines of code.***
+
+***Write a multiplayer game with client / server in 300+300 lines of code.***
+
 #### License : MIT
 #### http://opensource.org/licenses/MIT
 
@@ -7,9 +11,7 @@
 
 The library provides basic client / server network functionalities for games using RPCs. The major strength of the library is the template based RPC class. It allows to register and call RPCs effortless. It further includes a tutorial game server and game client (each around 300  lines of code ) for a very simple multiplayer shooting game as a proof of concept.
 
-The tutorial game only has 300 lines of server code and 300 lines client code.
-
-**Lib Features**
+**Network RPC Lib Features**
 
 * Register RPCs in one line. The RPC class autodetects all paramters from the function pointer
 * RPC Data-type mismatch or wrong number of parameters are stated as error to ease debugging
@@ -23,15 +25,16 @@ The tutorial game only has 300 lines of server code and 300 lines client code.
 * Tested on Cygwin and Windows, should compile in Linux too
 * C++11 based 
 
-**Lib Limitations**
+**Network RPC Lib Limitations**
 
 * RPCs cannot be class member functions
 * No compression
 * No encryption
 * Byte order will be supported in the future (htons..)
-* only void functions can be used. I tested with non-void functions, but it made the client/server programming much more complex
+* Only void functions supported. Non-void functions were tested but complicated everything.
+* Client to Client connections are not supported
 
-**Game Server Features**
+**Example Game Features**
 
 * Lobby 
 * Multiple Games
@@ -69,7 +72,7 @@ Server Side:
     void login(uint clientid, string name, string password)
     {
         // clientid is the first parameter for server functions
-        server.call("set_pos", vec3(1,2,3));    
+        server.call(clientid, "set_pos", vec3(1,2,3));    
     }
     
     int main()
