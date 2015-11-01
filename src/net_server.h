@@ -62,8 +62,6 @@ public:
 
 		uint _server_time = core_time();
 
-		_quit = 0;
-
 		while (!_quit)
 		{
 			while (1)
@@ -95,7 +93,6 @@ public:
 			}
 			if (event.type == ENET_EVENT_TYPE_RECEIVE)
 			{
-				//cout << "processing client id " << event.peer->connectID << endl;
 				if (event.packet->dataLength > 0)
 					_rpc.process(event.packet->data, event.packet->dataLength, get_id(event.peer));
 				enet_packet_destroy(event.packet);
@@ -111,8 +108,7 @@ public:
 		enet_host_destroy(_server);
 		
 	};
-	static void start_helper(NetServer *s){ s->main_loop(); };
-	void start(){ _server_thread = make_shared<thread>(NetServer::start_helper, this); };
+	void start(){ _quit = 0; _server_thread = make_shared<thread>(&NetServer::main_loop, this); };
 	void stop() { _quit = 1; _server_thread->join(); };
 
 	Rpc& get_rpc(){ return _rpc; }
