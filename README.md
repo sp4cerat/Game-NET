@@ -51,12 +51,12 @@ A first simple test on localhost (Core i7 Notebook) gave:
 * 69.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
 * 74.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
  
-10 Calls / Network Update
+10 Calls grouped / Network Update
  
 * 144.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
 * 310.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
 
-20 Calls / Network Update
+20 Calls grouped / Network Update
  
 * 142.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
 * 364.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
