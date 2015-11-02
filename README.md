@@ -1,4 +1,4 @@
-### Game NET - A Simple Network Lib with RPC support
+### Game NET - A Simple RPC Network Library (C++11)
 
 ***Write a simple server / client RPC system in just 10+20 lines of code.***
 
@@ -40,6 +40,28 @@ The library provides basic client / server network functionalities for games usi
 * Multiple Games
 * Handle spwaning/removing of game objects
 * Simple Shooting functionality
+* Intentionally textmode for simplicity
+
+**Benchmark**
+
+A first simple test on localhost (Core i7 Notebook) gave:
+ 
+1 Call / Network Update:
+ 
+* 69.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
+* 74.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
+ 
+10 Calls grouped / Network Update
+ 
+* 144.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
+* 310.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
+
+20 Calls grouped / Network Update
+ 
+* 142.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
+* 364.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
+
+Note that this is not about the response time
 
 **Example Usage**
 
