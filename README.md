@@ -42,6 +42,20 @@ The library provides basic client / server network functionalities for games usi
 * Simple Shooting functionality
 * Intentionally textmode for simplicity
 
+**Benchmark**
+
+A first simple test on localhost (Core i7 Notebook) gave:
+ 
+1 Call / Network Update:
+ 
+62.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
+58.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
+ 
+10 Calls / Network Update
+ 
+138.000 unreliable RPC calls/sec [client.call_ex(0,"hello_server", "Greetings")]
+270.000 reliable RPC calls/sec  [client.call_ex(1,"hello_server", "Greetings")]
+
 **Example Usage**
 
 Call Server Function:
