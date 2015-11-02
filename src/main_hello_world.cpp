@@ -55,6 +55,7 @@ void hello_client(string s)
 // Main
 void start_client()
 {
+	core_sleep(1000);
 	Rpc &r = client.get_rpc();
 	rpc_register_local(r, hello_client);
 	rpc_register_remote(r, hello_server);

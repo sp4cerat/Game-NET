@@ -34,7 +34,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <io.h>
+//#include <io.h>
 #include <malloc.h>
 #include <time.h>
 #include <math.h>
@@ -110,4 +110,19 @@ std::string core_to_string(T i)
     std::stringstream ss; ss << i;
     return ss.str();
 }
+//_______________________________________________________________//
+template <class T, class OWNER>
+class readonly
+{
+	friend OWNER;
+public:
+	explicit readonly() {}
+	explicit readonly(const T &t) : m_t(t){}
+	~readonly(){}
+	operator const T&() const{ return m_t; }
+
+private:
+	T& operator =(const T &t)	{ m_t = t; return m_t; }
+	T m_t;
+};
 //_______________________________________________________________//
