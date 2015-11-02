@@ -25,20 +25,16 @@ NetServer server(12345,0);
 void hello_server(uint clientid, string s)
 {
 	//cout << "Client " << clientid << " sends " << s << endl;
-	server.call(clientid, "hello_client",  "Greetings from Server");
+	//server.call(clientid, "hello_client",  "Greetings from Server");
 
 	static uint t = core_time() % 1000;
 	uint		t_now = core_time()%1000;
-
 	static uint bench = 0; bench=bench+1;	
-
-	//cout << t_now - t << endl;
 
 	if (t_now<t)
 	{
 		cout << bench << " RPCs/s " << endl;
 		bench = 0;
-		
 	}
 	t = t_now;
 }
