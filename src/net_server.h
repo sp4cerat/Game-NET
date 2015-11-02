@@ -8,7 +8,7 @@ public:
 	void send_to(int id, Message m, int reliable = 1 /* 0=unrelible 1=reliable */){ _mailbox.send_to(id, 1, m); };
 	template <class ...Args> Message msg(string name, Args... args){ return _rpc.msg(name, args ...); }
 	template <class ...Args> void call(uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...)); }
-	template <class ...Args> void call_ex(uint reliable /* 0=unrelible 1=reliable */, uint id, string name, Args... args){ send_to_ex(id, _rpc.msg(name, args ...), reliable); }
+	template <class ...Args> void call_ex(uint reliable /* 0=unrelible 1=reliable */, uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...), reliable); }
 	
 	NetServer(
 		uint port = 12345,
@@ -64,6 +64,7 @@ public:
 
 		while (!_quit)
 		{
+			if (0)
 			while (1)
 			{
 				uint t = core_time();
@@ -79,7 +80,7 @@ public:
 			_mailbox.process();
 			
 			ENetEvent event;
-			if (enet_host_service(_server, &event, 10) <= 0)continue;
+			if (enet_host_service(_server, &event, _update_delay) <= 0)continue;
 
 			if(event.type == ENET_EVENT_TYPE_CONNECT)
 			{
@@ -93,6 +94,7 @@ public:
 			}
 			if (event.type == ENET_EVENT_TYPE_RECEIVE)
 			{
+				//cout << "rec " << event.packet->dataLength << endl;
 				if (event.packet->dataLength > 0)
 					_rpc.process(event.packet->data, event.packet->dataLength, get_id(event.peer));
 				enet_packet_destroy(event.packet);
@@ -103,7 +105,7 @@ public:
 				if (_onDisconnect) _onDisconnect(get_id(event.peer));
 				_mailbox.erase(get_id(event.peer));
 			}
-			enet_host_flush(_server);
+			//enet_host_flush(_server);
 		}
 		enet_host_destroy(_server);
 		

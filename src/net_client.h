@@ -10,13 +10,15 @@ class NetClient
 
 public:
 
+	bool connected(){ return _connected; }
+
 	Rpc& get_rpc(){ return _rpc; }
 
 	NetClient(){ _client = 0; _peer = 0;  _connected = 0; }
 
 	uint get_id(){ return _client_id; }
 
-	bool connect(string host, int port, int bps_down = 57600, int bps_up = 14400, uint timeout=5000)
+	bool connect(string host, int port, int bps_down = 0, int bps_up = 0, uint timeout = 5000)
 	{
 		if (enet_initialize() != 0)
 		{
@@ -76,11 +78,9 @@ public:
 		if (data.size() == 0) return;
 
 		ENetPacket * packet = enet_packet_create(&data[0], data.size(),
-			reliable ? ENET_PACKET_FLAG_RELIABLE :
-			ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT);
+			reliable ? ENET_PACKET_FLAG_RELIABLE : ENET_PACKET_FLAG_UNRELIABLE_FRAGMENT);
 
 		enet_peer_send(_peer, 0 /*channel*/ , packet);
-		enet_host_flush(_client);
 	}
 	void flush_send()
 	{

@@ -391,7 +391,7 @@ public:
 		rcv.resize(size);
 		memcpy(&rcv[0],data,size);
 		Any any; int index = 0; int fi = 0;
-		//cout << "void process(uint hostid,uchar* data, int size)" << endl;
+		//cout << "void process(uint hostid,uchar* data, int size)" << size << endl;
 
 		while (index < size)
 		{
