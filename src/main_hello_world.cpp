@@ -22,10 +22,10 @@
 NetServer server(12345);
 
 // RPC
-void hello_server(uint clientid, string s)
+void hello_server(uint clientid, string s, int i, double d, float f , vec3 p )
 {
-	cout << "Client " << clientid << " sends " << s << endl;
-	server.call(clientid, "hello_client", "Greetings from Server");
+	cout << "Client " << clientid << " sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << Rpc::Any(p).get_data_as_string() << endl;
+	server.call(clientid, "hello_client", "Greetings from Server", 10, 12.34, 5.1f, vec3(1, 2, 3));
 }
 
 // Main
@@ -46,10 +46,10 @@ void start_server()
 NetClient client;
 
 // Client RPCs
-void hello_client(string s)
+void hello_client(string s, int i, double d, float f, vec3 p)
 {
-	cout << "Server sends " << s << endl;
-	client.call("hello_server", "Greetings from Client");
+	cout << "Server sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << Rpc::Any(p).get_data_as_string() << endl;
+	client.call("hello_server", "Greetings from Client", 20, 54.32, 7.8f, vec3(6, 7, 8));
 };
 
 // Main
@@ -60,7 +60,7 @@ void start_client()
 	rpc_register_local(r, hello_client);
 	rpc_register_remote(r, hello_server);
 	client.connect("localhost", 12345);
-	client.call("hello_server", "Greetings");
+	client.call("hello_server", "Greetings from Client", 10, 12.34, 5.1f , vec3 (1,2,3) );
 
 	while (1)
 	{

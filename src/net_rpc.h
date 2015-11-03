@@ -76,6 +76,7 @@ public:
 			double d; float f; char c;
 			short s; ushort us;
 			int i; uint ui;
+			unsigned long long ull;
 			uchar uc[16];
 		};
 		Any(void){ _type = 0; };
@@ -83,11 +84,11 @@ public:
 		{
 			_num = e; _type = Double;
 			if (e - (double)((uchar)e) == 0) { _type = UChar; return; }
-			if (e - (double)((char)e) == 0) { _type = Char; return; }
+			if (e - (double)((char)e) == 0)  { _type = Char; return; }
 			if (e - (double)((short)e) == 0) { _type = Short; return; }
-			if (e - (double)((ushort)e) == 0) { _type = UShort; return; }
-			if (e - (double)((int)e) == 0) { _type = Int; return; }
-			if (e - (double)((uint)e) == 0) { _type = UInt; return; }
+			if (e - (double)((ushort)e) == 0){ _type = UShort; return; }
+			if (e - (double)((int)e) == 0)   { _type = Int; return; }
+			if (e - (double)((uint)e) == 0)  { _type = UInt; return; }
 			if (e - (double)((float)e) == 0) { _type = Float; return; }
 		}
 		//Any(ENetPeer* p){ peer = p; }
@@ -149,20 +150,27 @@ public:
 			All a; int size = 0;
 			n.push_back((int)_type);
 			if (_type == UChar)
-			{ 
+			{
 				if ((uchar)_num < (256 - 32)){ n[n.size() - 1] = ((uchar)_num) + 32; return; };
-				a.uc[0] = (uchar)_num; size = sizeof(uchar); 
+				a.uc[0] = (uchar)_num; size = sizeof(uchar);
 			}
-			if (_type == Char){ a.c = (char)_num; size = sizeof(char); }
-			if (_type == Short) { a.s = (short)_num; size = sizeof(short); }
-			if (_type == UShort){ a.us = (ushort)_num; size = sizeof(ushort); }
-			if (_type == Int) { a.i = (int)_num; size = sizeof(int); }
-			if (_type == UInt) { a.ui = (uint)_num; size = sizeof(uint); }
-			if (_type == Float) { a.f = (float)_num; size = sizeof(float); }
-			if (_type == Double) { a.d = (double)_num; size = sizeof(double); }
-			if (size > 0) loopi(0, size) n.push_back(a.uc[i]);
+			if (_type == Char)  { a.c = (char)  _num; size = sizeof(char); }
+			if (_type == Short) { a.s = (short) _num; a.us = htons(a.us);  size = sizeof(short); }
+			if (_type == UShort){ a.us= (ushort)_num; a.us = htons(a.us);  size = sizeof(ushort); }
+			if (_type == Int)   { a.i = (int)   _num; a.ui = htonl(a.ui);  size = sizeof(int); }
+			if (_type == UInt)  { a.ui= (uint)  _num; a.ui = htonl(a.ui);  size = sizeof(uint); }
+			if (_type == Float) { a.f = (float) _num; a.ui = htonf(a.f);   size = sizeof(float); }
+			if (_type == Double){ a.d = (double)_num; a.ull= htond(a.d);   size = sizeof(double); }
+
+			if (size > 0) { loopi(0, size) n.push_back(a.uc[i]); return; }
+
 			if (_type >= Vec2) if (_type <= Mat4)
-				loopi(0, AnySize[_type])  n.push_back(((uchar*)_f)[i]);
+			{
+				uint ui[16];
+				loopi(0, AnySize[_type] / sizeof(float) ) ui[i] = htonf(_f[i]);
+				loopi(0, AnySize[_type])  n.push_back(((uchar*)ui)[i]);
+			}
+
 			if (_type == String) { loopi(0, _str.size()) n.push_back(_str[i]); n.push_back(0); }
 			if (_type == Vector) { Any len(_vec.size()); len.net_push(n); loopi(0, _vec.size()) _vec[i].net_push(n); }
 			if (_type == Map) { Any len(_vec.size()); len.net_push(n); loopi(0, _vec.size()) _vec[i].net_push(n); loopi(0, _vec2.size()) _vec2[i].net_push(n); }
@@ -196,21 +204,24 @@ public:
 			}
 			if (_type >= Char)if (_type <= Float)
 			{
-				int size = AnySize[_type];
-				loopi(0, size) a.uc[i] = n[index + i];
+				int size = AnySize[_type]; 
+				copy(n.begin() + index, n.begin() + index + size, a.uc);
+				//loopi(0, size) a.uc[i] = n[index + i];
 				if (_type == UChar) _num = a.uc[0];
-				if (_type == Char) _num = a.c;
-				if (_type == Short) _num = a.s;
-				if (_type == UShort) _num = a.us;
-				if (_type == Int) _num = a.i;
-				if (_type == UInt) _num = a.ui;
-				if (_type == Float) _num = a.f;
-				if (_type == Double) _num = a.d;
+				if (_type == Char)  _num = a.c;
+				if (_type == Short) { a.us = ntohs(a.us); _num = a.s;  }
+				if (_type == UShort){ a.us = ntohs(a.us); _num = a.us; }
+				if (_type == Int)   { a.ui = ntohl(a.ui); _num = a.i;  }
+				if (_type == UInt)  { a.ui = ntohl(a.ui); _num = a.ui; }
+				if (_type == Float) { a.f  = ntohf(a.ui); _num = a.f;  }
+				if (_type == Double){ a.d  = ntohd(a.ull);_num = a.d;  }
 				return index + size;
 			}
 			if (_type >= Vec2)if (_type <= Mat4)
 			{
-				loopi(0, AnySize[_type])  ((uchar*)_f)[i] = n[index + i];
+				uint ui[16];
+				loopi(0, AnySize[_type])  ((uchar*)ui)[i] = n[index + i];
+				loopi(0, AnySize[_type] / sizeof(float)) _f[i] = ntohf(ui[i]);
 				return index + AnySize[_type];
 			}
 		}
