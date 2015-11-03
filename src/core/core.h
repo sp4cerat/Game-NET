@@ -50,12 +50,14 @@
 #include <algorithm>    // std::sort
 #include <string>
 #include <fstream>
+#include <tuple>
+#include <istream>
+#include <functional>
+
 #include <glm/gtc/quaternion.hpp>
 #include <glm/glm.hpp>
 //_______________________________________________________________//
 // Functions
-using namespace std;
-using namespace glm;
 
 #define uchar unsigned char
 #define ushort unsigned short

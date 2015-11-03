@@ -187,7 +187,7 @@ std::vector<uchar> core_read_file(const char* filename)
 	
 	void core_console_draw( std::string buffer )
 	{
-		cout << buffer;
+		std::cout << buffer;
 	
 		HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
 		COORD coord;
@@ -212,8 +212,8 @@ std::vector<uchar> core_read_file(const char* filename)
 
 	void core_console_draw( std::string buffer )
 	{
-		cout << buffer;
-		loopi(0,buffer.size())if(buffer[i]=='\n')cout << "\033[F" ;
+		std::cout << buffer;
+		loopi(0,buffer.size())if(buffer[i]=='\n')std::cout << "\033[F" ;
 	}
 	
 	int kbhit(void) 

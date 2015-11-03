@@ -1,17 +1,3 @@
-
-
-
-#include <tuple>
-#include <iostream> 
-#include <strstream>
-#include <istream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <map>
-#include <functional>
-#include <math.h>
-
 // --- process single datatype ---
 #define RPC_NUM_TYPES 18
 const int AnySize[RPC_NUM_TYPES] = {
@@ -76,9 +62,20 @@ public:
 			double d; float f; char c;
 			short s; ushort us;
 			int i; uint ui;
-			unsigned long long ull;
+			uint  u64[2];
 			uchar uc[16];
 		};
+		inline void check_double_byte_order(All& a)
+		{
+			if (htons(1) == 1) return;
+
+			uint   b = a.u64[0]; 
+			a.u64[0] = a.u64[1]; 
+			a.u64[1] = b;
+
+			return;
+		}
+
 		Any(void){ _type = 0; };
 		Any(double e)
 		{
@@ -159,15 +156,15 @@ public:
 			if (_type == UShort){ a.us= (ushort)_num; a.us = htons(a.us);  size = sizeof(ushort); }
 			if (_type == Int)   { a.i = (int)   _num; a.ui = htonl(a.ui);  size = sizeof(int); }
 			if (_type == UInt)  { a.ui= (uint)  _num; a.ui = htonl(a.ui);  size = sizeof(uint); }
-			if (_type == Float) { a.f = (float) _num; a.ui = htonf(a.f);   size = sizeof(float); }
-			if (_type == Double){ a.d = (double)_num; a.ull= htond(a.d);   size = sizeof(double); }
+			if (_type == Float) { a.f = (float) _num; a.ui = htonl(a.ui);  size = sizeof(float); }
+			if (_type == Double){ a.d = (double)_num; loopi(0, 2) a.u64[i] = htonl(a.u64[i]); check_double_byte_order(a); size = sizeof(double); }
 
 			if (size > 0) { loopi(0, size) n.push_back(a.uc[i]); return; }
 
 			if (_type >= Vec2) if (_type <= Mat4)
 			{
-				uint ui[16];
-				loopi(0, AnySize[_type] / sizeof(float) ) ui[i] = htonf(_f[i]);
+				uint ui[16]; All a;
+				loopi(0, AnySize[_type] / sizeof(float)) { a.f = _f[i]; ui[i] = htonl(a.ui); }
 				loopi(0, AnySize[_type])  n.push_back(((uchar*)ui)[i]);
 			}
 
@@ -198,8 +195,8 @@ public:
 				Any len; index = len.net_pop(n, index);
 				_vec.resize(int(len._num));
 				_vec2.resize(int(len._num));
-				loopi(0, _vec.size()) { index = _vec[i].net_pop(n, index); }
-				loopi(0, _vec2.size()) { index = _vec2[i].net_pop(n, index); }
+				loopi(0, _vec.size()) { index = _vec [i].net_pop(n, index); }
+				loopi(0, _vec2.size()){ index = _vec2[i].net_pop(n, index); }
 				return index;
 			}
 			if (_type >= Char)if (_type <= Float)
@@ -213,15 +210,15 @@ public:
 				if (_type == UShort){ a.us = ntohs(a.us); _num = a.us; }
 				if (_type == Int)   { a.ui = ntohl(a.ui); _num = a.i;  }
 				if (_type == UInt)  { a.ui = ntohl(a.ui); _num = a.ui; }
-				if (_type == Float) { a.f  = ntohf(a.ui); _num = a.f;  }
-				if (_type == Double){ a.d  = ntohd(a.ull);_num = a.d;  }
+				if (_type == Float) { a.ui = ntohl(a.ui); _num = a.f;  }
+				if (_type == Double){ loopi(0, 2) a.u64[i] = ntohl(a.u64[i]); check_double_byte_order(a); _num = a.d; }
 				return index + size;
 			}
-			if (_type >= Vec2)if (_type <= Mat4)
+			if (_type >= Vec2) if (_type <= Mat4)
 			{
-				uint ui[16];
+				uint ui[16]; All a;
 				loopi(0, AnySize[_type])  ((uchar*)ui)[i] = n[index + i];
-				loopi(0, AnySize[_type] / sizeof(float)) _f[i] = ntohf(ui[i]);
+				loopi(0, AnySize[_type] / sizeof(float)) { a.ui = ntohl(ui[i]); _f[i] = a.f;}
 				return index + AnySize[_type];
 			}
 		}
@@ -460,7 +457,7 @@ public:
 
 #define rpc_register_local(grpc,a)\
 {\
-	Rpc::function_traits<std::function<decltype(a)>>::set_rpc(&grpc,#a, a);\
+	::net::Rpc::function_traits<std::function<decltype(a)>>::set_rpc(&grpc,#a, a);\
 }
 
 #define rpc_register_remote(grpc,a)\

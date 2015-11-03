@@ -64,11 +64,10 @@ public:
 
 		while (!_quit)
 		{
-			if (0)
 			while (1)
 			{
 				uint t = core_time();
-				if (t - _server_time > _update_delay)
+				if (t - _server_time >= _update_delay)
 				{
 					_server_time = t;
 					break;

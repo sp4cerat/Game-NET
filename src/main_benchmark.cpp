@@ -8,9 +8,16 @@
 // http://opensource.org/licenses/MIT
 ////////////////////////////////////////////////////////////////////////////////
 #include "core.h"
-#include "net_rpc.h"
-#include "net_client.h"
-#include "net_server.h"
+
+namespace net
+{
+	using namespace std;
+	using namespace glm;
+
+	#include "net_rpc.h"
+	#include "net_client.h"
+	#include "net_server.h"
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 // Simple Hello World
@@ -19,10 +26,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Server Part
 
-NetServer server(12345,0);
+net::NetServer server(12345,0);
 
 // RPC
-void hello_server(uint clientid, string s)
+void hello_server(uint clientid, std::string s)
 {
 	//cout << "Client " << clientid << " sends " << s << endl;
 	//server.call(clientid, "hello_client",  "Greetings from Server");
@@ -33,7 +40,7 @@ void hello_server(uint clientid, string s)
 
 	if (t_now<t)
 	{
-		cout << bench << " RPCs/s " << endl;
+		std::cout << bench << " RPCs/s " << std::endl;
 		bench = 0;
 	}
 	t = t_now;
@@ -42,7 +49,7 @@ void hello_server(uint clientid, string s)
 // Main
 void start_server()
 {
-	Rpc &r = server.get_rpc();
+	net::Rpc &r = server.get_rpc();
 	rpc_register_remote(r, hello_client);
 	rpc_register_local (r, hello_server);
 	server.start();
@@ -54,10 +61,10 @@ void start_server()
 ////////////////////////////////////////////////////////////////////////////////
 // Client Part
 
-NetClient client;
+net::NetClient client;
 
 // Client RPCs
-void hello_client(string s)
+void hello_client(std::string s)
 {
 	//cout << "Server sends " << s << endl;
 };
@@ -66,7 +73,7 @@ void hello_client(string s)
 void start_client()
 {
 	core_sleep(1000);
-	Rpc &r = client.get_rpc();
+	net::Rpc &r = client.get_rpc();
 	rpc_register_local (r, hello_client);
 	rpc_register_remote(r, hello_server);
 	client.connect("localhost", 12345);
