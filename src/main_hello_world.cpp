@@ -24,12 +24,12 @@ namespace net
 ////////////////////////////////////////////////////////////////////////////////
 // Server Part
 
-net::NetServer server(12345);
+net::Server server(12345);
 
 // RPC
 void hello_server(uint clientid, std::string s, int i, double d, float f, glm::vec3 p)
 {
-	std::cout << "Client " << clientid << " sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << net::Rpc::Any(p).get_data_as_string() << std::endl;
+	std::cout << "Client " << clientid << " sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << net::Any(p).get_data_as_string() << std::endl;
 	server.call(clientid, "hello_client", "Greetings from Server", 10, 12.34, 5.1f, glm::vec3(1, 2, 3));
 }
 
@@ -48,12 +48,12 @@ void start_server()
 ////////////////////////////////////////////////////////////////////////////////
 // Client Part
 
-net::NetClient client;
+net::Client client;
 
 // Client RPCs
 void hello_client(std::string s, int i, double d, float f, glm::vec3 p)
 {
-	std::cout << "Server sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << net::Rpc::Any(p).get_data_as_string() << std::endl;
+	std::cout << "Server sends " << s << " i:" << i << " d:" << d << " f:" << f << " p:" << net::Any(p).get_data_as_string() << std::endl;
 	client.call("hello_server", "Greetings from Client", 20, 54.32, 7.8f, glm::vec3(6, 7, 8));
 };
 

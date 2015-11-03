@@ -7,7 +7,7 @@ namespace GameServer
 
 	// ------------------------ Data ------------------------ //
 
-	NetServer server;
+	Server server;
 
 	uint id_lobby;
 
@@ -49,7 +49,7 @@ namespace GameServer
 
 	// ------------------------ Utility ------------------------ //
 
-	Rpc::Message lobby_update_msg()
+	Message lobby_update_msg()
 	{
 		map<uint, string> game_list;
 		map<uint, string> players_in_lobby;
@@ -64,7 +64,7 @@ namespace GameServer
 		uint game = players[clientid].game;
 
 		// remove from game
-		Rpc::Message m = server.msg("game_obj_health", clientid, 0);
+		Message m = server.msg("game_obj_health", clientid, 0);
 		for (auto &p : players) if (p.second.game == game)
 		{
 			server.send_to(p.first, m);
@@ -98,7 +98,7 @@ namespace GameServer
 		g.game_objects[clientid] = GameObject(GameObject::Player, game_player_spawn_pos(), vec4(0, 1, 0, 0), 100);
 
 		// broadcast spawn
-		Rpc::Message msg = server.msg("game_obj_spawn", clientid, GameObject::Player, names[clientid],
+		Message msg = server.msg("game_obj_spawn", clientid, GameObject::Player, names[clientid],
 			g.game_objects[clientid].pos,
 			g.game_objects[clientid].rot,
 			g.game_objects[clientid].health);
@@ -130,7 +130,7 @@ namespace GameServer
 					vec3 &pos = i.second.pos;
 					pos += vec3(i.second.rot.x, i.second.rot.y, 0)*0.25f;
 
-					Rpc::Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
+					Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
 
 					//remove shots if collided or outside screen 
 					if (pos.x >= global::width || pos.y >= global::height || pos.x < 0 || pos.y < 0 || global::collision(pos.x, pos.y))
@@ -148,16 +148,16 @@ namespace GameServer
 							{
 								// notify others of health
 								j.second.health -= 1;
-								Rpc::Message m1 = server.msg("game_obj_health", j.first, j.second.health);
+								Message m1 = server.msg("game_obj_health", j.first, j.second.health);
 
 								// benefit shoot creator if less than 100 health
 								uint &creator_health = g.second.game_objects[i.second.creator].health;
 								if (creator_health<100)creator_health++;
-								Rpc::Message m2 = server.msg("game_obj_health", i.second.creator, creator_health);
+								Message m2 = server.msg("game_obj_health", i.second.creator, creator_health);
 
 								// get score in addition ?
 								uint &creator_score = players[i.second.creator].score;
-								Rpc::Message m3;
+								Message m3;
 								if (j.second.health <= 0)
 								{
 									creator_score++;
@@ -186,7 +186,7 @@ namespace GameServer
 	}
 	void update_lobby()
 	{
-		Rpc::Message msg_lobby = lobby_update_msg();
+		Message msg_lobby = lobby_update_msg();
 
 		static uint counter = 0; counter = counter + 1;
 
@@ -210,7 +210,7 @@ namespace GameServer
 		players.erase(clientid);
 		names.erase(clientid);
 	}
-	void clientupdate(NetServer &s)
+	void clientupdate(Server &s)
 	{
 		update_game();
 		update_lobby();
@@ -225,7 +225,7 @@ namespace GameServer
 		// add shot to scene
 		games[game_id].game_objects[id] = GameObject(GameObject::Shot, v, r, 100,clientid);
 		// create network message
-		Rpc::Message msg = server.msg("game_obj_spawn", id, GameObject::Shot ,"", v, r, 100);
+		Message msg = server.msg("game_obj_spawn", id, GameObject::Shot ,"", v, r, 100);
 		// broadcast to all players
 		for (auto &i : players) if (i.second.game == game_id) server.send_to(i.first, msg);
 	}
@@ -237,7 +237,7 @@ namespace GameServer
 		g.rot = r;
 
 		// notify others
-		Rpc::Message m = server.msg("game_obj_set_pos", clientid,v, r);
+		Message m = server.msg("game_obj_set_pos", clientid,v, r);
 
 		for (auto &i : players) if (i.first != clientid)
 		{
@@ -289,7 +289,7 @@ namespace GameServer
 				uint max_connections	=10, 
 				uint client_timeout_ms	=2000)
 	{
-		server = NetServer(
+		server = Server(
 			port, 				/*port*/
 			update_delay_ms,	/*update delay in ms*/
 			max_connections,	/*max number of players*/

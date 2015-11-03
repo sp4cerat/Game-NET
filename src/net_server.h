@@ -1,23 +1,20 @@
-class NetServer
+class Server
 {
-
 public:
-
-	typedef Rpc::Message Message;
 
 	void send_to(int id, Message m, int reliable = 1 /* 0=unrelible 1=reliable */){ _mailbox.send_to(id, 1, m); };
 	template <class ...Args> Message msg(string name, Args... args){ return _rpc.msg(name, args ...); }
 	template <class ...Args> void call(uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...)); }
 	template <class ...Args> void call_ex(uint reliable /* 0=unrelible 1=reliable */, uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...), reliable); }
 	
-	NetServer(
+	Server(
 		uint port = 12345,
 		uint update_delay = 10,
 		uint max_connections = 32,
 		uint client_timeout = 2000,
 		void c(uint clientid)=0,
 		void d(uint clientid) = 0,
-		void u(NetServer &s) = 0
+		void u(Server &s) = 0
 		)
 	{
 		_port = port;
@@ -109,7 +106,7 @@ public:
 		enet_host_destroy(_server);
 		
 	};
-	void start(){ _quit = 0; _server_thread = make_shared<thread>(&NetServer::main_loop, this); };
+	void start(){ _quit = 0; _server_thread = make_shared<thread>(&Server::main_loop, this); };
 	void stop() { _quit = 1; _server_thread->join(); };
 
 	Rpc& get_rpc(){ return _rpc; }
@@ -128,7 +125,7 @@ public:
 
 	void(*_onConnect)(uint clientid);
 	void(*_onDisconnect)(uint clientid);
-	void(*_onUpdate)(NetServer &s);
+	void(*_onUpdate)(Server &s);
 
 	struct Mailbox
 	{

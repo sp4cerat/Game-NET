@@ -26,7 +26,7 @@ namespace net
 ////////////////////////////////////////////////////////////////////////////////
 // Server Part
 
-net::NetServer server(12345,0);
+net::Server server(12345,0);
 
 // RPC
 void hello_server(uint clientid, std::string s)
@@ -61,7 +61,7 @@ void start_server()
 ////////////////////////////////////////////////////////////////////////////////
 // Client Part
 
-net::NetClient client;
+net::Client client;
 
 // Client RPCs
 void hello_client(std::string s)

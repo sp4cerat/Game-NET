@@ -6,6 +6,10 @@
 #include <unistd.h>
 #include "dirent.h"
 #include <termios.h>
+//#include <arpa/inet.h>
+//#include<netinet/in.h>
+//#include<sys/socket.h>
+//#include<netdb.h>
 
 #define core_stop(fmt, ...) \
 {\
@@ -15,4 +19,5 @@
 	printf(text);\
 	exit(0);\
 };
+
 

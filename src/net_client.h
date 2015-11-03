@@ -1,4 +1,4 @@
-class NetClient
+class Client
 {
 	uint _client_id; // server side id of this client
 	ENetHost * _client;
@@ -14,7 +14,7 @@ public:
 
 	Rpc& get_rpc(){ return _rpc; }
 
-	NetClient(){ _client = 0; _peer = 0;  _connected = 0; }
+	Client(){ _client = 0; _peer = 0;  _connected = 0; }
 
 	uint get_id(){ return _client_id; }
 
