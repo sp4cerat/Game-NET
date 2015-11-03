@@ -30,7 +30,6 @@ The library provides basic client / server network functionalities for games usi
 * RPCs cannot be class member functions
 * No compression
 * No encryption
-* Byte order will be supported in the future (htons..)
 * Only void functions supported. Non-void functions were tested but complicated everything.
 * Client to Client connections are not supported
 
