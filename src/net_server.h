@@ -12,6 +12,7 @@ public:
 		uint update_delay = 10,
 		uint max_connections = 32,
 		uint client_timeout = 2000,
+		bool compress_data = false,
 		void c(uint clientid)=0,
 		void d(uint clientid) = 0,
 		void u(Server &s) = 0
@@ -26,6 +27,7 @@ public:
 		_max_connections = max_connections;
 		_client_timeout = client_timeout;
 		_connected_clients = 0; 
+		_compress_data = compress_data;
 	}
 
 	uint get_num_clients(){ return _connected_clients; };
@@ -55,6 +57,12 @@ public:
 			printf("Server not created - maybe up already?\n");
 			return;
 		}
+
+		if (_compress_data)
+		{
+			enet_host_compress_with_range_coder(_server);
+		}
+
 		printf("Server::started\n");
 
 		uint _server_time = core_time();
@@ -187,4 +195,5 @@ public:
 	Mailbox _mailbox;
 
 	shared_ptr<thread> _server_thread;
+	bool _compress_data;
 };

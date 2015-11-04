@@ -18,7 +18,7 @@ public:
 
 	uint get_id(){ return _client_id; }
 
-	bool connect(string host, int port, int bps_down = 0, int bps_up = 0, uint timeout = 5000)
+	bool connect(string host, int port, int bps_down = 0, int bps_up = 0, uint timeout = 5000, bool compress_data=false)
 	{
 		if (enet_initialize() != 0)
 		{
@@ -45,6 +45,11 @@ public:
 			cout << "Client::No available peers for initiating an ENet connection.\n";
 			return false;
 		}
+		if (compress_data)
+		{
+			enet_host_compress_with_range_coder(_client);
+		}
+
 		/* Wait up to 5 seconds for the connection attempt to succeed. */
 		if (enet_host_service(_client, &_event, timeout) > 0 &&
 			_event.type == ENET_EVENT_TYPE_CONNECT)
@@ -60,6 +65,7 @@ public:
 			cout << "Client::Connection to " << host << ":" << port << " failed." << endl;
 			return false;
 		}
+		
 		_connected = 1;
 
 		enet_peer_timeout(_peer, timeout, 0, timeout);

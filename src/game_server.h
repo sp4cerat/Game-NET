@@ -294,6 +294,7 @@ namespace GameServer
 			update_delay_ms,	/*update delay in ms*/
 			max_connections,	/*max number of players*/
 			client_timeout_ms,	/*timeout before disconnecting player*/
+			false,				/*compress data ; must be same as for client*/
 			connect,			/*connect callback*/
 			disconnect,			/*disconnect callback*/
 			clientupdate		/*update callback*/);

@@ -23,10 +23,18 @@ namespace net
 // Simple Hello World
 ////////////////////////////////////////////////////////////////////////////////
 
+uint network_port    = 12345;
+bool compress_data	 = false;
+uint time_out		 = 2000;
+uint max_connections = 32;
+uint update_delay    = 0;
+uint bps_up          = 0; // unlimited
+uint bps_down        = 0; // unlimited
+
 ////////////////////////////////////////////////////////////////////////////////
 // Server Part
 
-net::Server server(12345,0);
+net::Server server(network_port, update_delay, max_connections, time_out, compress_data);
 
 // RPC
 void hello_server(uint clientid, std::string s)
@@ -76,7 +84,7 @@ void start_client()
 	net::Rpc &r = client.get_rpc();
 	rpc_register_local (r, hello_client);
 	rpc_register_remote(r, hello_server);
-	client.connect("localhost", 12345);
+	client.connect("localhost", network_port, bps_down, bps_up, time_out, compress_data);
 	
 	uint c;
 
