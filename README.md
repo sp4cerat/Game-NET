@@ -20,6 +20,7 @@ The library provides basic client / server network functionalities for games usi
 * Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
 * Support for nested Datatypes like map [ string , vector ]
 * Reliable and unreliable calls possible
+* Hack-safety added. Illegal packets (trying to create buffer overruns or such) are simply discarded.
 * Basic range compression (enet)
 * Function pointers of remote functions are not required
 * Based on ENet
