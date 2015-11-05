@@ -14,7 +14,7 @@ The library provides basic client / server network functionalities for games usi
 **Network RPC Lib Features**
 
 * Register RPCs in one line. The RPC class autodetects all paramters from the function pointer
-* RPC Data-type mismatch or wrong number of parameters are stated as error to ease debugging
+* RPC Data-type mismatch or wrong number of parameters are stated as error to ease debugging (#define RPC_DEBUG)
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
 * Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
