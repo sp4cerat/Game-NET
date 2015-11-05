@@ -65,10 +65,11 @@ void start_client()
 	rpc_register_local (r, hello_client);
 	rpc_register_remote(r, hello_server);
 	client.connect("localhost", 12345);
-	client.call("hello_server", "Greetings from Client", 10, 12.34, 5.1f , glm::vec3 (1,2,3) );
+	
 
 	while (1)
 	{
+		client.call("hello_server", "Greetings from Client", 2, 12.34, 5.1f, glm::vec3(1, 2, 3));
 		client.process();
 		core_sleep(1000);
 	}

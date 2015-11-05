@@ -44,14 +44,24 @@ void hello_server(uint clientid, std::string s)
 
 	static uint t = core_time() % 1000;
 	uint		t_now = core_time()%1000;
-	static uint bench = 0; bench=bench+1;	
+	static uint bench = 0; bench++;
+	static uint count = 0; count++;
 
 	if (t_now<t)
 	{
-		std::cout << bench << " RPCs/s " << std::endl;
+		std::cout << bench << " RPCs/s (call # " << count << ")" << std::endl;
 		bench = 0;
 	}
-	t = t_now;
+	t = t_now;	 
+
+	/*
+	// Example code to send a random packet to try "hacking" the remote
+	net::Message m;
+	net::Any a(0); a.net_push(m); // function 0
+	net::Any b(3); b.net_push(m); // 3 parameters
+	loopi(0, 100) m.push_back((t_now * 23423423 + i * 34553 + t + 423423)%40);
+	server.send_to(clientid, m,0);
+	*/
 }
 
 // Main
@@ -72,9 +82,9 @@ void start_server()
 net::Client client;
 
 // Client RPCs
-void hello_client(std::string s)
+void hello_client(std::string s , std::vector<std::string> v, glm::vec3 v3 )
 {
-	//cout << "Server sends " << s << endl;
+	//std::cout << "Server sends " << s << std::endl;
 };
 
 // Main
@@ -86,13 +96,14 @@ void start_client()
 	rpc_register_remote(r, hello_server);
 	client.connect("localhost", network_port, bps_down, bps_up, time_out, compress_data);
 	
-	uint c;
-
 	while (client.connected())
 	{
 		loopi(0, 20) client.call("hello_server", "Greetings");
 
 		client.process();
+
+		// Comment in if memory usage increases due to queued packets
+		//core_sleep(1);
 	}
 	//client.disconnect();
 	core_sleep(1000);

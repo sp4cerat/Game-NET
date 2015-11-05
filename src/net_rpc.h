@@ -1,5 +1,9 @@
 // --- process single datatype ---
+
+//#define RPC_DEBUG
+
 #define RPC_NUM_TYPES 18
+
 const int AnySize[RPC_NUM_TYPES] = {
 	1, 1,
 	sizeof(char), sizeof(uchar), sizeof(short),
@@ -149,34 +153,67 @@ struct Any {
 	}
 	int net_pop(vector<uchar> &n, int index = 0)
 	{
+		_type = UChar;
+
+		if (index < 0) return -1;
+		if (index >= n.size()) return -1;// core_stop("message end reached but parameter wanted");
+
 		All a; int size = 0;
-		if (index >= n.size()) core_stop("message end reached but parameter wanted");
 		_type = n[index]; index++;
-		if (_type >= 32){ _num = _type - 32; _type = UChar; return index; }
+		if (_type >= RPC_NUM_TYPES){ _num = _type - 32; _type = UChar; return index; }
+		
+		if (index >= n.size()) return -1;
+		
 		if (_type == String)
 		{
+			uint maxlen = n.size() - index;
+			if (strnlen((char*)&n[index], maxlen) == maxlen )
+				return -1;
+
 			_str = ((char*)&n[index]);
 			return index + _str.size() + 1;
 		}
 		if (_type == Vector)
 		{
 			Any len; index = len.net_pop(n, index);
-			_vec.resize(int(len._num));
-			loopi(0, _vec.size()) { index = _vec[i].net_pop(n, index); }
+			_vec.clear();// resize(int(len._num));
+			loopi(0, int(len._num))
+			{ 
+				Any a; 
+				if (index >= n.size()) return -1; 
+				index = a.net_pop(n, index); 
+				if (index <0) return -1;  
+				_vec.push_back(a); 
+			}
 			return index;
 		}
 		if (_type == Map)
 		{
-			Any len; index = len.net_pop(n, index);
-			_vec.resize(int(len._num));
-			_vec2.resize(int(len._num));
-			loopi(0, _vec.size()) { index = _vec[i].net_pop(n, index); }
-			loopi(0, _vec2.size()){ index = _vec2[i].net_pop(n, index); }
+			Any len,a; index = len.net_pop(n, index);
+			_vec.clear();// resize(int(len._num));
+			_vec2.clear();//.resize(int(len._num));
+			loopi(0, int(len._num))
+			{
+				if (index >= n.size()) return -1;
+				index = a.net_pop(n, index);
+				if (index <0) return -1;
+				_vec.push_back(a);
+			}
+			loopi(0, int(len._num))
+			{
+				if (index >= n.size()) return -1;
+				index = a.net_pop(n, index);
+				if (index <0) return -1;
+				_vec2.push_back(a);
+			}
+			//loopi(0, _vec.size()) { index = _vec[i].net_pop(n, index); }
+			//loopi(0, _vec2.size()){ index = _vec2[i].net_pop(n, index); }
 			return index;
 		}
 		if (_type >= Char)if (_type <= Float)
 		{
 			int size = AnySize[_type];
+			if ( index + size > n.size()) return -1;
 			copy(n.begin() + index, n.begin() + index + size, a.uc);
 			//loopi(0, size) a.uc[i] = n[index + i];
 			if (_type == UChar) _num = a.uc[0];
@@ -192,6 +229,7 @@ struct Any {
 		if (_type >= Vec2) if (_type <= Mat4)
 		{
 			uint ui[16]; All a;
+			if (index + AnySize[_type] > n.size()) return -1;
 			loopi(0, AnySize[_type])  ((uchar*)ui)[i] = n[index + i];
 			loopi(0, AnySize[_type] / sizeof(float)) { a.ui = ntohl(ui[i]); _f[i] = a.f; }
 			return index + AnySize[_type];
@@ -199,33 +237,37 @@ struct Any {
 	}
 	bool is_number(){ if (_type >= Char)if (_type <= Float) return true; return false; };
 	bool is_number(int t){ if (t >= Char)if (t <= Float) return true; return false; };
-	void check_type(uint type)
+	bool is_type(uint type)
 	{
-		bool mismatch = 0;
-		if (is_number() != is_number(type)) mismatch = 1;
-		if (!is_number() && type != _type)  mismatch = 1;
-		if (mismatch) core_stop("Rpc::Any::Type Mismatch! \nExpected [ %s ], Received [ %s ]", get_type_string().c_str(), get_type_string(type).c_str());
+		if (type > 17 || _type > 17) core_stop("type %d  _type %d ", type, _type);
+		bool ok = 1;
+		if (is_number() != is_number(type)) ok = 0;
+		if (!is_number() && type != _type)  ok = 0;
+#ifdef RPC_DEBUG
+		if (!ok) printf("Rpc::Any::Type Mismatch! \nExpected [ %s ], Received [ %s ]\n", get_type_string(type).c_str() , get_type_string().c_str());
+#endif
+		return ok;
 	};
-	void getT(uchar &a){ a = (uchar)_num;	check_type(Char); };
-	void getT(char &a){ a = (char)_num;		check_type(UChar); };
-	void getT(short &a){ a = (short)_num;	check_type(Short); };
-	void getT(ushort &a){ a = (ushort)_num; check_type(UShort); };
-	void getT(float &a){ a = (float)_num;	check_type(Char); };
-	void getT(double &a){ a = (double)_num; check_type(Char); };
-	void getT(int &a){ a = (int)_num;		check_type(Char); };
-	void getT(uint &a){ a = (uint)_num;		check_type(Char); };
-	void getT(vec2 &a){ a = vec2(_f[0], _f[1]);					check_type(Vec2); };
-	void getT(vec3 &a){ a = vec3(_f[0], _f[1], _f[2]);			check_type(Vec3); };
-	void getT(vec4 &a){ a = vec4(_f[0], _f[1], _f[3], _f[4]);	check_type(Vec4); };
-	void getT(quat &a){ a = quat(_f[0], _f[1], _f[3], _f[4]);	check_type(Quat); };
-	void getT(mat2 &m){ loopi(0, 2)loopj(0, 2) m[j][i] = _f[j * 2 + i]; check_type(Mat2); };
-	void getT(mat3 &m){ loopi(0, 3)loopj(0, 3) m[j][i] = _f[j * 3 + i]; check_type(Mat3); };
-	void getT(mat4 &m){ loopi(0, 4)loopj(0, 4) m[j][i] = _f[j * 4 + i]; check_type(Mat4); };
-	void getT(string &a){ a = _str; check_type(String); };
+	bool getT(uchar &a){ a = (uchar)_num;	return is_type(Char); };
+	bool getT(char &a){ a = (char)_num;		return is_type(UChar); };
+	bool getT(short &a){ a = (short)_num;	return is_type(Short); };
+	bool getT(ushort &a){ a = (ushort)_num; return is_type(UShort); };
+	bool getT(float &a){ a = (float)_num;	return is_type(Char); };
+	bool getT(double &a){ a = (double)_num; return is_type(Char); };
+	bool getT(int &a){ a = (int)_num;		return is_type(Char); };
+	bool getT(uint &a){ a = (uint)_num;		return is_type(Char); };
+	bool getT(vec2 &a){ a = vec2(_f[0], _f[1]);					return is_type(Vec2); };
+	bool getT(vec3 &a){ a = vec3(_f[0], _f[1], _f[2]);			return is_type(Vec3); };
+	bool getT(vec4 &a){ a = vec4(_f[0], _f[1], _f[3], _f[4]);	return is_type(Vec4); };
+	bool getT(quat &a){ a = quat(_f[0], _f[1], _f[3], _f[4]);	return is_type(Quat); };
+	bool getT(mat2 &m){ loopi(0, 2)loopj(0, 2) m[j][i] = _f[j * 2 + i]; return is_type(Mat2); };
+	bool getT(mat3 &m){ loopi(0, 3)loopj(0, 3) m[j][i] = _f[j * 3 + i]; return is_type(Mat3); };
+	bool getT(mat4 &m){ loopi(0, 4)loopj(0, 4) m[j][i] = _f[j * 4 + i]; return is_type(Mat4); };
+	bool getT(string &a){ a = _str; return is_type(String); };
 	template<class T>
-	void getT(vector<T> &v)
+	bool getT(vector<T> &v)
 	{
-		check_type(Vector);
+		if (!is_type(Vector)) return 0;
 
 		v.clear();
 		loopi(0, _vec.size())
@@ -234,11 +276,12 @@ struct Any {
 			_vec[i].getT(t);
 			v.push_back(t);
 		}
+		return 1;
 	};
 	template<class T, class U>
-	void getT(map<T, U> &m)
+	bool getT(map<T, U> &m)
 	{
-		check_type(Map);
+		if (!is_type(Map)) return 0;
 
 		m.clear();
 		loopi(0, _vec.size())
@@ -248,6 +291,7 @@ struct Any {
 			_vec2[i].getT(u);
 			m[t] = u;
 		}
+		return 1;
 	};
 	int get_type(){ return _type; }
 private:
@@ -289,6 +333,18 @@ public:
 		T t; list[index].getT(t); return t;
 	}
 
+	template <typename T> bool static verify_arg(int index, std::vector<Any> &list)
+	{
+		T t; bool istype = list[index].getT(t);
+		if (!istype)
+		{
+			#ifdef RPC_DEBUG
+			cout << "Error for parameter " << index << endl;
+			#endif
+		}
+		return istype;
+	}
+
 	// ---- RPC Data to Params ----
 	
 	vector< std::function<void(std::vector<uchar>&, int&, string& , uint)> > _functionarray;
@@ -312,24 +368,41 @@ public:
 			// server rpcs have client id as first parameter
 			if (server){ list.push_back(hostid); count--; } 
 
+			if (index >= data.size()) { index = -1; return; }
+
 			Any any_args; int num_args;
 			index = any_args.net_pop(data, index);
+
+			if (index == -1) return;
+
 			any_args.getT(num_args);
+
+			if (count != num_args)
+			{
+#ifdef RPC_DEBUG
+				cout << "RPC " << name << " arg count mismatch " << count << " != " << num_args << endl;
+#endif
+				index = -1;
+				return ;
+				//string s, t;
+				//loopi(0, list.size())s.append(" " + list[i].get_type_string());
+				//printf("RPC: [%s] Expected %d arg(s), received %d [%s ] %s", name.c_str(), n, num_args, s.c_str(), t.c_str());
+				//return;
+			}
 
 			for (int i = 0; i < num_args; i++)
 			{
 				Any a;
+				if (index >= data.size()) { index = -1; return; }
 				index = a.net_pop(data, index);
+				if (index < 0) return;
 				list.push_back(a);
 			}
 
-			if (count != num_args)
-			{
-				string s,t;
-				loopi(0, list.size())s.append(" " + list[i].get_type_string());
-				if (server) t = "\nNote that this call is on the server, so the first parameter needs to be an int for the client ID";
-				core_stop("RPC: [%s] Expected %d arg(s), received %d [%s ] %s", name.c_str(), n, num_args,s.c_str(),t.c_str());
-			}
+
+			std::vector<bool> is_type = { verify_arg<Args>(Is, list)... };
+
+			for (auto i : is_type) if (!i) return; // dont call if type mismatch
 
 			f(read_from<Args>(Is, list)...);
 		});
@@ -367,7 +440,7 @@ public:
 		if (_remote_functions.find(name) != _remote_functions.end())
 			CallRPC_imp(flags, Any(_remote_functions[name]), Any(n), Any(args)...);
 		else
-			core_stop("RPC function %s not found", name.c_str());
+			core_stop("RPC function %s not found\n", name.c_str());
 	};
 
 	template <class ...Args>
@@ -405,15 +478,32 @@ public:
 		while (index < size)
 		{
 			index = any.net_pop(rcv, index);
+			if (index == -1)
+			{
+				cout << "malformed packet" << endl;
+				return;
+			}
 			any.getT(fi);//function index
 
 			if (fi < _functionarray.size() && fi >= 0)
 			{
 				//cout << _local_functions[fi] << endl;
 				_functionarray[fi](rcv, index, _local_functions[fi], hostid);
+				if (index < 0 )
+				{
+#ifdef RPC_DEBUG
+					cout << "malformed packet" << endl;
+#endif
+					return;
+				}
 			}
 			else
-				core_stop("Server RPC function %d not found", fi);
+			{
+#ifdef RPC_DEBUG
+				printf("Server RPC function %d not found\n", fi);
+#endif
+				return;
+			}
 		}
 	}
 	// traits helper templates

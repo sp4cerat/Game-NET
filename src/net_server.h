@@ -158,6 +158,7 @@ public:
 		void send(ENetPeer *peer, vector<uchar> data, int channel, bool reliable = 1)
 		{
 			if (data.size() == 0) return;
+
 			//cout << " sending " << data.size() << " bytes" << endl;
 			ENetPacket * packet = enet_packet_create(&data[0], data.size(),
 				reliable ? ENET_PACKET_FLAG_RELIABLE :
@@ -170,23 +171,15 @@ public:
 			{
 				int id = i.first;
 				Box& b = i.second;
-
+				
 				Message m;
-				loopj(0, b.out_rel.size())
-				{
-					//cout << "b.out_rel.size())"<< endl;
-					loopk(0, b.out_rel[j].size())
-						m.push_back(b.out_rel[j][k]);
-				}
+				for (auto &j : b.out_rel) for (auto &k :j) m.push_back(k);
 				send(b.peer, m, 0, 1); // reliable
-
 				m.clear();
-				loopj(0, b.out_unr.size())
-					loopk(0, b.out_unr[j].size())
-					m.push_back(b.out_unr[j][k]);
 
+				for (auto &j : b.out_unr) for (auto &k : j) m.push_back(k);
 				send(b.peer, m, 0, 0); // unrealiable
-
+				
 				b.out_rel.clear();
 				b.out_unr.clear();
 			}
