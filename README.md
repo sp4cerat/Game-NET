@@ -24,7 +24,7 @@ The library provides basic client / server network functionalities for games usi
 * Basic range compression (enet)
 * Function pointers of remote functions are not required
 * Based on ENet
-* Tested on Cygwin and Windows, should compile in Linux too
+* Tested on Cygwin, Linux and Windows
 * C++11 based 
 
 **Network RPC Lib Limitations**
