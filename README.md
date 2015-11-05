@@ -20,6 +20,7 @@ The library provides basic client / server network functionalities for games usi
 * Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
 * Support for nested Datatypes like map [ string , vector ]
 * Reliable and unreliable calls possible
+* Basic range compression (enet)
 * Function pointers of remote functions are not required
 * Based on ENet
 * Tested on Cygwin and Windows, should compile in Linux too
@@ -28,7 +29,6 @@ The library provides basic client / server network functionalities for games usi
 **Network RPC Lib Limitations**
 
 * RPCs cannot be class member functions
-* No compression
 * No encryption
 * Only void functions supported. Non-void functions were tested but complicated everything.
 * Client to Client connections are not supported
