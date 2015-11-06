@@ -132,15 +132,15 @@ namespace GameClient
 			string	n = i.second.name;
 			string  h = core_to_string(i.second.health);
 
-			global::screen_set(p.x, p.y, (i.second.type == GameObject::Player) ? 'O' : '*');
+			global::screen_set((int)p.x, (int)p.y, (i.second.type == GameObject::Player) ? 'O' : '*');
 			
 			// player name
-			global::screen_set(p.x - n.length() / 2, p.y + 1, n);
+			global::screen_set((int)p.x - n.length() / 2, (int)p.y + 1, n);
 						
 			// health
 			if (i.second.type == GameObject::Player)
 			{
-				global::screen_set(p.x - h.length() / 2, p.y + 2, h);
+				global::screen_set((int)p.x - h.length() / 2, (int)p.y + 2, h);
 			}
 		}
 
@@ -156,7 +156,7 @@ namespace GameClient
 			core_to_string(score) + 
 			string((dead ? " [r] to respawn  " : "             ")) 
 		);
-		loopi(0, statusbar.length()) global::screen_set(i, global::height - 1, statusbar[i]);
+		loopi(0, (int)statusbar.length()) global::screen_set(i, global::height - 1, statusbar[i]);
 		
 		// Show Screen
 
@@ -196,7 +196,7 @@ namespace GameClient
 			vec3 p = clamp(my.pos + vec3(my.rot.x, my.rot.y, 0), 
 				vec3(0, 0, 0), vec3(global::width - 1, global::width - 2, 0));
 
-			if (!global::collision(p.x, p.y))
+			if (!global::collision((int)p.x, (int)p.y))
 			{ 
 				my.pos = p;
 				client.call("game_player_pos", my.pos, vec4(my.rot.x, my.rot.y, 0, 0));
@@ -251,7 +251,7 @@ namespace GameClient
 	{
    		if(id==clientid) score = s;
 	}
-	void game_obj_spawn(uint id, uint type, string name, vec3 pos, vec4 rot, float health)
+	void game_obj_spawn(uint id, uint type, string name, vec3 pos, vec4 rot, int health)
 	{
 		game_objects[id] = GameObject(type,name,pos,rot,health);
 	}

@@ -3,7 +3,7 @@
 ///////////////////////////////////////////
 float core_cubicInterpolate(float p[4], float x)
 {
-	return p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0])));
+	return (float)(p[1] + 0.5 * x*(p[2] - p[0] + x*(2.0*p[0] - 5.0*p[1] + 4.0*p[2] - p[3] + x*(3.0*(p[1] - p[2]) + p[3] - p[0]))));
 }
 ///////////////////////////////////////////
 float core_bicubicInterpolate(float p[4][4], float x, float y)
@@ -177,8 +177,9 @@ std::vector<uchar> core_read_file(const char* filename)
 	ffile.seekg(0, std::ios::beg);
 
 	// read the data:
-	std::vector<uchar> fileData(fileSize);
-	ffile.read((char*)&fileData[0], fileSize);
+	std::vector<uchar> fileData;
+	fileData.resize( (uint) fileSize );
+	ffile.read((char*)&fileData[0], fileSize );
 	return fileData;
 }
 ////////////////////////////
@@ -197,7 +198,7 @@ std::vector<uchar> core_read_file(const char* filename)
 	}
 	int core_keyb()
 	{
-		if(!kbhit()) return 0; else return _getch();
+		if(!_kbhit()) return 0; else return _getch();
 	}
 	unsigned int core_time()
 	{ 

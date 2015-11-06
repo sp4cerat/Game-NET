@@ -61,7 +61,7 @@ namespace net
 		}
 		void	screen_set(int x, int y, string s)
 		{
-			loopi(0, s.length()) screen_set(x + i, y, s[i]);
+			loopi(0, (int)s.length()) screen_set(x + i, y, s[i]);
 		}
 		void	screen_clear()
 		{
@@ -73,7 +73,7 @@ namespace net
 		void	screen_draw_level()
 		{
 			//return;
-			loopj(0, height) loopi(0, strlen(&(level[j][0])))
+			loopj(0, (int)height) loopi(0, (int)strlen(&(level[j][0])))
 				screen_set(i, j, level[j][i]);
 		};
 		void	screen_draw()
@@ -90,22 +90,24 @@ namespace net
 };
 int main()
 {
-	net::GameServer::start(	12345	/* server port */,
-						10,			/* update delay */
-						10,			/* max connected players */
-						2000		/* client timeout before disconnect*/);
-
+	
+	net::GameServer::start(	12345,	// server port 
+						10,			// update delay 
+						10,			// max connected players 
+						2000	 	// client timeout before disconnect
+						);
+						
 	core_sleep(100);
-
+	
 	std::cout << "Enter user: ";
 	std::string login;
 	std::cin >> login;
 
 	net::GameClient::start(login,		/* username */
 						"12345",		/* password (not checked) */
-						"localhost",	/* server host */	
+						"localhost", //"10.8.8.1", // /* server host */	
 						12345,			/* server port */
-						10				/* update delay */	);	
+						10);			/* update delay */
 
 	while (!net::global::exit) core_sleep(1000);
 

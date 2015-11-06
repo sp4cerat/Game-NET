@@ -6,7 +6,7 @@ public:
 	template <class ...Args> Message msg(string name, Args... args){ return _rpc.msg(name, args ...); }
 	template <class ...Args> void call(uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...)); }
 	template <class ...Args> void call_ex(uint reliable /* 0=unrelible 1=reliable */, uint id, string name, Args... args){ send_to(id, _rpc.msg(name, args ...), reliable); }
-	
+
 	Server(
 		uint port = 12345,
 		uint update_delay = 10,
@@ -31,8 +31,8 @@ public:
 	}
 
 	uint get_num_clients(){ return _connected_clients; };
-	uint get_id(ENetPeer* host){ return ((uint)host->data); };
-	void set_id(ENetPeer* host, uint id){ host->data = (void*)(id); };
+	uint get_id(ENetPeer* host){ Void2Int v; v.p = host->data; return v.i; };
+	void set_id(ENetPeer* host, uint id){ Void2Int v; v.p = NULL; v.i = id; host->data = v.p; };
 
 	uint get_new_id(){ static uint count = 0; count++; return count; };
 
@@ -189,4 +189,10 @@ public:
 
 	shared_ptr<thread> _server_thread;
 	bool _compress_data;
+
+	// suppress void* <-> uint conversion warning in linux/unix/cygwin
+	union Void2Int
+	{
+		void* p; uint i;
+	};
 };

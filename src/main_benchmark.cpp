@@ -54,14 +54,14 @@ void hello_server(uint clientid, std::string s)
 	}
 	t = t_now;	 
 
-	/*
+	
 	// Example code to send a random packet to try "hacking" the remote
 	net::Message m;
 	net::Any a(0); a.net_push(m); // function 0
 	net::Any b(3); b.net_push(m); // 3 parameters
 	loopi(0, 100) m.push_back((t_now * 23423423 + i * 34553 + t + 423423)%40);
-	server.send_to(clientid, m,0);
-	*/
+	server.send_to(clientid, m);
+	
 }
 
 // Main

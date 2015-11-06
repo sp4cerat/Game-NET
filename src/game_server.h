@@ -14,7 +14,7 @@ namespace GameServer
 	struct GameObject
 	{
 		enum Type{ Player = 0, Shot = 1 };
-		GameObject(uint t = Player, vec3 p = vec3(0, 0, 0), vec4 r = vec4(0, 0, 0, 0),float h=100,uint c=0)
+		GameObject(uint t = Player, vec3 p = vec3(0, 0, 0), vec4 r = vec4(0, 0, 0, 0),int h=100,uint c=0)
 		{
 			type = t; pos = p; rot = r; health = h; creator = c; 
 		};
@@ -133,7 +133,7 @@ namespace GameServer
 					Message m = server.msg("game_obj_set_pos", i.first, i.second.pos, i.second.rot);
 
 					//remove shots if collided or outside screen 
-					if (pos.x >= global::width || pos.y >= global::height || pos.x < 0 || pos.y < 0 || global::collision(pos.x, pos.y))
+					if (pos.x >= (float)global::width || pos.y >= (float)global::height || (float)pos.x < 0 || pos.y < 0 || global::collision((int)pos.x, (int)pos.y))
 					{
 						// remove obj by setting health to 0
 						m = server.msg("game_obj_health", i.first, 0);

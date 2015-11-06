@@ -112,9 +112,9 @@ struct Any {
 		if (_type == Mat3) loopj(0, 3) loopi(0, 3) { s << _f[j * 2 + i] << " "; };
 		if (_type == Mat4) loopj(0, 4) loopi(0, 4) { s << _f[j * 2 + i] << " "; };
 		if (_type == String) s << _str;
-		if (_type == Vector) { s << "[ "; loopi(0, _vec.size()) { s << _vec[i].get_data_as_string() << " "; }; s << "]"; }
+		if (_type == Vector) { s << "[ "; for(auto i:_vec ) { s << i.get_data_as_string() << " "; }; s << "]"; }
 		if (_type == Map) {
-			s << "[ "; loopi(0, _vec.size()) {
+			s << "[ "; loopi(0, (int)_vec.size()) {
 				s << _vec[i].get_data_as_string() << " = " << _vec2[i].get_data_as_string() << " ";
 			}; s << "]";
 		}
@@ -143,26 +143,26 @@ struct Any {
 		if (_type >= Vec2) if (_type <= Mat4)
 		{
 			uint ui[16]; All a;
-			loopi(0, AnySize[_type] / sizeof(float)) { a.f = _f[i]; ui[i] = htonl(a.ui); }
-			loopi(0, AnySize[_type])  n.push_back(((uchar*)ui)[i]);
+			loopi(0, (int)(AnySize[_type] / sizeof(float))) { a.f = _f[i]; ui[i] = htonl(a.ui); }
+			loopi(0, (int)(AnySize[_type]))  n.push_back(((uchar*)ui)[i]);
 		}
 
-		if (_type == String) { loopi(0, _str.size()) n.push_back(_str[i]); n.push_back(0); }
-		if (_type == Vector) { Any len(_vec.size()); len.net_push(n); loopi(0, _vec.size()) _vec[i].net_push(n); }
-		if (_type == Map) { Any len(_vec.size()); len.net_push(n); loopi(0, _vec.size()) _vec[i].net_push(n); loopi(0, _vec2.size()) _vec2[i].net_push(n); }
+		if (_type == String) { loopi(0, (int)_str.size()) n.push_back(_str[i]); n.push_back(0); }
+		if (_type == Vector) { Any len(_vec.size()); len.net_push(n); for(auto i:_vec) i.net_push(n); }
+		if (_type == Map) { Any len(_vec.size()); len.net_push(n)   ; for(auto i:_vec) i.net_push(n); for (auto i : _vec2) i.net_push(n); }
 	}
 	int net_pop(vector<uchar> &n, int index = 0)
 	{
 		_type = UChar;
 
 		if (index < 0) return -1;
-		if (index >= n.size()) return -1;// core_stop("message end reached but parameter wanted");
+		if (index >= (int)n.size()) return -1;// core_stop("message end reached but parameter wanted");
 
 		All a; int size = 0;
 		_type = n[index]; index++;
 		if (_type >= RPC_NUM_TYPES){ _num = _type - 32; _type = UChar; return index; }
 		
-		if (index >= n.size()) return -1;
+		if (index >= (int)n.size()) return -1;
 		
 		if (_type == String)
 		{
@@ -180,7 +180,7 @@ struct Any {
 			loopi(0, int(len._num))
 			{ 
 				Any a; 
-				if (index >= n.size()) return -1; 
+				if (index >= (int)n.size()) return -1;
 				index = a.net_pop(n, index); 
 				if (index <0) return -1;  
 				_vec.push_back(a); 
@@ -194,14 +194,14 @@ struct Any {
 			_vec2.clear();//.resize(int(len._num));
 			loopi(0, int(len._num))
 			{
-				if (index >= n.size()) return -1;
+				if (index >= (int)n.size()) return -1;
 				index = a.net_pop(n, index);
 				if (index <0) return -1;
 				_vec.push_back(a);
 			}
 			loopi(0, int(len._num))
 			{
-				if (index >= n.size()) return -1;
+				if (index >= (int)n.size()) return -1;
 				index = a.net_pop(n, index);
 				if (index <0) return -1;
 				_vec2.push_back(a);
@@ -213,7 +213,7 @@ struct Any {
 		if (_type >= Char)if (_type <= Float)
 		{
 			int size = AnySize[_type];
-			if ( index + size > n.size()) return -1;
+			if (index + size >(int)n.size()) return -1;
 			copy(n.begin() + index, n.begin() + index + size, a.uc);
 			//loopi(0, size) a.uc[i] = n[index + i];
 			if (_type == UChar) _num = a.uc[0];
@@ -229,11 +229,12 @@ struct Any {
 		if (_type >= Vec2) if (_type <= Mat4)
 		{
 			uint ui[16]; All a;
-			if (index + AnySize[_type] > n.size()) return -1;
+			if (index + (int)AnySize[_type] > (int)n.size()) return -1;
 			loopi(0, AnySize[_type])  ((uchar*)ui)[i] = n[index + i];
-			loopi(0, AnySize[_type] / sizeof(float)) { a.ui = ntohl(ui[i]); _f[i] = a.f; }
+			loopi(0, AnySize[_type] / (int)sizeof(float)) { a.ui = ntohl(ui[i]); _f[i] = a.f; }
 			return index + AnySize[_type];
 		}
+		return -1;
 	}
 	bool is_number(){ if (_type >= Char)if (_type <= Float) return true; return false; };
 	bool is_number(int t){ if (t >= Char)if (t <= Float) return true; return false; };
@@ -270,7 +271,7 @@ struct Any {
 		if (!is_type(Vector)) return 0;
 
 		v.clear();
-		loopi(0, _vec.size())
+		loopi(0, (int)_vec.size())
 		{
 			T t;
 			_vec[i].getT(t);
@@ -284,7 +285,8 @@ struct Any {
 		if (!is_type(Map)) return 0;
 
 		m.clear();
-		loopi(0, _vec.size())
+		
+		loopi(0, (int)_vec.size())
 		{
 			T t; U u;
 			_vec[i].getT(t);
@@ -368,7 +370,7 @@ public:
 			// server rpcs have client id as first parameter
 			if (server){ list.push_back(hostid); count--; } 
 
-			if (index >= data.size()) { index = -1; return; }
+			if (index >= (int)data.size()) { index = -1; return; }
 
 			Any any_args; int num_args;
 			index = any_args.net_pop(data, index);
@@ -393,7 +395,7 @@ public:
 			for (int i = 0; i < num_args; i++)
 			{
 				Any a;
-				if (index >= data.size()) { index = -1; return; }
+				if (index >= (int)data.size()) { index = -1; return; }
 				index = a.net_pop(data, index);
 				if (index < 0) return;
 				list.push_back(a);
@@ -425,12 +427,8 @@ public:
 		//cout << "channel:" << ch << endl;
 
 		std::vector<Any> vec = { args... };
-		loopi(0, vec.size())
-		{
-			// channel 0 : non return unreliable
-			// channel 1 : non return reliable
-			vec[i].net_push(_send_data[ ch ]);
-		};
+
+		for (auto i : vec) i.net_push(_send_data[ch]);
 	};
 
 	template <class ...Args> void call(int flags,string name, Args... args)
@@ -448,7 +446,7 @@ public:
 	{
 		vector<uchar> m;
 		std::vector<Any> vec = { args... };
-		loopi(0, vec.size())
+		loopi(0, (int)vec.size())
 		{
 			vec[i].net_push(m);
 		};
@@ -472,7 +470,7 @@ public:
 		vector<uchar> rcv;
 		rcv.resize(size);
 		memcpy(&rcv[0],data,size);
-		Any any; int index = 0; int fi = 0;
+		Any any; int index = 0; uint fi = 0;
 		//cout << "void process(uint hostid,uchar* data, int size)" << size << endl;
 
 		while (index < size)
@@ -526,7 +524,7 @@ public:
 	};
 	void set_remote_functions(vector<string> &list)
 	{
-		loopi(0, list.size()) _remote_functions[list[i]] = i;
+		loopi(0, (int)list.size()) _remote_functions[list[i]] = i;
 	}
 	void get_local_functions(vector<string> &list)
 	{
@@ -555,3 +553,5 @@ public:
 {\
 	grpc.add_remote_function(  #a );\
 }
+
+// ------------------------------------------------

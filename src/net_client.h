@@ -69,6 +69,7 @@ public:
 		_connected = 1;
 
 		enet_peer_timeout(_peer, timeout, 0, timeout);
+		return true;
 	}
 
 	void disconnect()
@@ -95,7 +96,7 @@ public:
 			vector<uchar> &snd = *(_rpc.get_send(i));
 			if (snd.size() > 0)
 			{
-				send(snd, i);
+				send(snd, i!=0 ? true : false);
 				snd.clear();
 			}
 		}
