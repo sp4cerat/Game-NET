@@ -14,16 +14,17 @@ The library provides basic client / server network functionalities for games usi
 **Network RPC Lib Features**
 
 * Register RPCs in one line. The RPC class autodetects all paramters from the function pointer
-* RPC Data-type mismatch or wrong number of parameters are stated as error to ease debugging
+* RPC Data-type mismatch or wrong parameter count is printed as error to ease debugging (#define RPC_DEBUG)
 * Numbers are automatically sent as the smallest possible datatype (byte, short , .. )
 * Supports GLM datatypes for use in 3D Games
 * Supported Datatypes : (u)char,(u)short,(u)int,float,double,vector,map, GLM vec,mat and quat
 * Support for nested Datatypes like map [ string , vector ]
 * Reliable and unreliable calls possible
+* Hack-safe. Illegal packets (trying to create buffer overruns or such) are discarded.
 * Basic range compression (enet)
 * Function pointers of remote functions are not required
 * Based on ENet
-* Tested on Cygwin and Windows, should compile in Linux too
+* Tested on Cygwin, Linux and Windows
 * C++11 based 
 
 **Network RPC Lib Limitations**
